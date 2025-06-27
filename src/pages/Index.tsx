@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Download, CheckCircle, Clock, Users, Heart, Shield, ArrowRight, Star, Quote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -273,7 +274,6 @@ const Index = () => {
                   </p>
                   <div>
                     <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                    <p className="text-gray-600 text-sm">{testimonial.role}</p>
                   </div>
                 </CardContent>
               </Card>
