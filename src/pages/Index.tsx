@@ -114,11 +114,8 @@ const Index = () => {
                   placeholder="Enter your email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:border-transparent"
-                  style={{ 
-                    borderColor: '#f8f3f0',
-                    focusRingColor: '#8da3e8'
-                  }}
+                  className="w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-transparent"
+                  style={{ borderColor: '#f8f3f0' }}
                   required
                 />
                 <Button 
@@ -370,7 +367,7 @@ const Index = () => {
             
             <Button 
               size="lg"
-              className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4 mb-6"
+              className="bg-white hover:bg-gray-100 text-lg px-8 py-4 mb-6"
               style={{ color: '#8da3e8' }}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
@@ -385,8 +382,7 @@ const Index = () => {
               </p>
               <Button 
                 variant="outline"
-                className="border-white text-white hover:bg-white"
-                style={{ '--tw-text-opacity': '1', color: 'white' }}
+                className="border-white text-white hover:bg-white hover:text-blue-600"
                 onClick={() => window.open('/playbook', '_blank')}
               >
                 View Complete Playbook Template
