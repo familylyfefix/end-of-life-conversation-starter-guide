@@ -28,6 +28,21 @@ const HeroSection = () => {
           />
         </div>
         
+        {/* PDF Mockup at the top */}
+        <div className="mb-12">
+          <div className="relative max-w-md mx-auto">
+            <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-6 rounded-2xl shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-300">
+              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+                <img 
+                  src="/lovable-uploads/ed366094-5287-4acd-94fa-5653acdcdee9.png" 
+                  alt="End-of-Life Conversation Starter Guide Preview"
+                  className="w-full h-auto"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        
         <Badge className="mb-6" style={{ backgroundColor: '#ff8a58', color: 'white' }}>
           <Heart className="w-4 h-4 mr-2" />
           100% FREE Forever
