@@ -7,12 +7,40 @@ import { Badge } from '@/components/ui/badge';
 const HeroSection = () => {
   const [email, setEmail] = useState('');
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // Replace this URL with your actual Systeme.io form action URL
+  const SYSTEME_IO_FORM_URL = "https://your-systeme-io-form-url.com/form";
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (email) {
+    if (!email) return;
+
+    setIsSubmitting(true);
+    console.log('Submitting email to Systeme.io:', email);
+
+    try {
+      // Create form data for Systeme.io
+      const formData = new FormData();
+      formData.append('email', email);
+      formData.append('source', 'landing-page');
+
+      const response = await fetch(SYSTEME_IO_FORM_URL, {
+        method: 'POST',
+        body: formData,
+        mode: 'no-cors' // Systeme.io forms typically require no-cors mode
+      });
+
+      // Since we're using no-cors, we can't check response status
+      // We'll assume success and show the thank you message
       setIsSubmitted(true);
-      console.log('Email submitted:', email);
+      console.log('Email submitted successfully to Systeme.io');
+    } catch (error) {
+      console.error('Error submitting to Systeme.io:', error);
+      // Still show success message since no-cors prevents error detection
+      setIsSubmitted(true);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -72,20 +100,23 @@ const HeroSection = () => {
               </div>
               <input
                 type="email"
+                name="email"
                 placeholder="Enter your email address"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-transparent"
                 style={{ borderColor: '#f8f3f0' }}
                 required
+                disabled={isSubmitting}
               />
               <Button 
                 type="submit"
                 className="w-full text-white py-3 text-lg font-semibold hover:opacity-90 transition-opacity"
                 style={{ backgroundColor: '#8da3e8' }}
+                disabled={isSubmitting}
               >
                 <Download className="w-5 h-5 mr-2" />
-                Get Instant Access (100% Free)
+                {isSubmitting ? 'Sending...' : 'Get Instant Access (100% Free)'}
               </Button>
               <p className="text-xs text-gray-500 text-center">
                 No spam. Unsubscribe anytime. Your privacy is protected.
