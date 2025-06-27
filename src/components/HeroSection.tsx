@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Download, CheckCircle, Heart, Shield, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -56,21 +55,6 @@ const HeroSection = () => {
           />
         </div>
         
-        {/* PDF Mockup at the top */}
-        <div className="mb-12">
-          <div className="relative max-w-md mx-auto">
-            <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-6 rounded-2xl shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-300">
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                <img 
-                  src="/lovable-uploads/564f0238-80a9-4082-bee8-22d605bb9ef9.png" 
-                  alt="End-of-Life Conversation Starter Guide Preview"
-                  className="w-full h-auto"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
-        
         <Badge className="mb-6" style={{ backgroundColor: '#ff8a58', color: 'white' }}>
           <Heart className="w-4 h-4 mr-2" />
           100% FREE Forever
@@ -85,6 +69,15 @@ const HeroSection = () => {
         <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
           Get the proven conversation starters that help families discuss end-of-life wishes with love, clarity, and confidence—without the awkwardness
         </p>
+
+        {/* Family photo under heading */}
+        <div className="mb-12">
+          <img 
+            src="/lovable-uploads/d8308b5a-f139-4472-8bb0-fd1e70995539.png" 
+            alt="Family gathering around dinner table"
+            className="w-full max-w-2xl mx-auto rounded-2xl shadow-lg"
+          />
+        </div>
 
         {/* Download Form */}
         <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto mb-12 border-2" style={{ borderColor: '#f8f3f0' }}>
