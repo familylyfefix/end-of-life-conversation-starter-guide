@@ -126,9 +126,21 @@ const Index = () => {
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Check Your Email!
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 mb-4">
                   Your free guide is on its way to your inbox.
                 </p>
+                <div className="border-t pt-4">
+                  <p className="text-sm text-gray-600 mb-3">
+                    Ready to take it to the next level?
+                  </p>
+                  <Button 
+                    onClick={() => window.open('/playbook', '_blank')}
+                    className="w-full bg-green-600 hover:bg-green-700 text-white"
+                  >
+                    Get the Complete Playbook ($47)
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </div>
               </div>
             )}
           </div>
@@ -352,7 +364,21 @@ const Index = () => {
               <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
             
-            <p className="text-blue-200 text-sm">
+            <div className="mt-6 pt-6 border-t border-blue-500">
+              <p className="text-blue-200 text-sm mb-4">
+                Want the complete system?
+              </p>
+              <Button 
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-blue-600"
+                onClick={() => window.open('/playbook', '_blank')}
+              >
+                View Complete Playbook Template
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+            
+            <p className="text-blue-200 text-sm mt-6">
               Start meaningful conversations with your family today
             </p>
           </div>
