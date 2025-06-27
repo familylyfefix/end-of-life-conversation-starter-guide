@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Download, CheckCircle, Heart, Shield, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -73,8 +74,8 @@ const HeroSection = () => {
         {/* Family photo under heading */}
         <div className="mb-12">
           <img 
-            src="/lovable-uploads/d8308b5a-f139-4472-8bb0-fd1e70995539.png" 
-            alt="Family gathering around dinner table"
+            src="/lovable-uploads/e859eb8e-6409-4b8d-85f5-b40fbf68e148.png" 
+            alt="Family celebrating together at dinner table"
             className="w-full max-w-2xl mx-auto rounded-2xl shadow-lg"
           />
         </div>
