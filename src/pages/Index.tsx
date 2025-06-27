@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Download, CheckCircle, Clock, Users, Heart, Shield, ArrowRight, Star, Quote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -78,8 +77,8 @@ const Index = () => {
       <div className="container mx-auto px-4 pt-12 pb-20">
         <div className="text-center max-w-4xl mx-auto">
           <Badge className="mb-6 bg-green-100 text-green-800 hover:bg-green-100">
-            <Clock className="w-4 h-4 mr-2" />
-            FREE for Limited Time
+            <Heart className="w-4 h-4 mr-2" />
+            100% FREE Forever
           </Badge>
           
           {/* Primary Headline */}
@@ -101,7 +100,7 @@ const Index = () => {
                     Download Your FREE Guide Now
                   </h3>
                   <p className="text-sm text-gray-600 mb-4">
-                    Join 15,000+ families who've already started these important conversations
+                    Get instant access to our comprehensive conversation starter guide
                   </p>
                 </div>
                 <input
@@ -139,16 +138,16 @@ const Index = () => {
           {/* Trust Indicators */}
           <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500">
             <div className="flex items-center">
-              <Users className="w-4 h-4 mr-2" />
-              15,000+ Downloads
-            </div>
-            <div className="flex items-center">
-              <Star className="w-4 h-4 mr-2 text-yellow-500" />
-              4.9/5 Rating
+              <Heart className="w-4 h-4 mr-2" />
+              Always Free
             </div>
             <div className="flex items-center">
               <Shield className="w-4 h-4 mr-2" />
               100% Private & Secure
+            </div>
+            <div className="flex items-center">
+              <Download className="w-4 h-4 mr-2" />
+              Instant Download
             </div>
           </div>
         </div>
@@ -287,10 +286,10 @@ const Index = () => {
       </div>
 
       {/* Urgency Section */}
-      <div className="bg-gradient-to-r from-orange-50 to-red-50 py-16">
+      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 py-16">
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto">
-            <Clock className="w-12 h-12 text-orange-600 mx-auto mb-6" />
+            <Heart className="w-12 h-12 text-blue-600 mx-auto mb-6" />
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
               Don't Wait Until It's Too Late
             </h2>
@@ -298,11 +297,11 @@ const Index = () => {
               Every day that passes without these conversations is a missed opportunity for clarity and peace of mind. Start today—your future self and your family will thank you.
             </p>
             <div className="bg-white rounded-lg p-6 inline-block shadow-lg">
-              <p className="text-2xl font-bold text-orange-600 mb-2">
-                This guide is FREE now
+              <p className="text-2xl font-bold text-blue-600 mb-2">
+                This guide is completely FREE
               </p>
               <p className="text-gray-600">
-                But we may start charging for it soon as demand grows
+                Download it now and keep it forever
               </p>
             </div>
           </div>
@@ -357,7 +356,7 @@ const Index = () => {
             </Button>
             
             <p className="text-blue-200 text-sm">
-              Join thousands of families who've already started these vital conversations
+              Start meaningful conversations with your family today
             </p>
           </div>
         </div>
