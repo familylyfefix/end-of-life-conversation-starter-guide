@@ -37,20 +37,17 @@ const Index = () => {
 
   const testimonials = [
     {
-      name: "Sarah M., 52",
-      role: "Daughter caring for aging parents",
+      name: "Sarah M.",
       text: "This guide gave me the courage to finally talk to my parents about their wishes. The conversation starters were perfect - not too heavy, but thorough.",
       rating: 5
     },
     {
-      name: "Robert K., 67",
-      role: "Retired teacher",
-      text: "As someone approaching retirement, I needed help discussing this with my adult children. The guide made it so much easier than I expected.",
+      name: "Robert K.",
+      text: "I needed help discussing this with my adult children. The guide made it so much easier than I expected.",
       rating: 5
     },
     {
-      name: "Jennifer L., 45",
-      role: "Working mother of three",
+      name: "Jennifer L.",
       text: "I was dreading this conversation with my spouse, but the guide's approach made it feel like we were planning for our future together, not dwelling on endings.",
       rating: 5
     }
