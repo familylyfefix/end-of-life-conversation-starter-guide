@@ -34,7 +34,7 @@ const HeroSection = () => {
             <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-6 rounded-2xl shadow-2xl transform rotate-2 hover:rotate-0 transition-transform duration-300">
               <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                 <img 
-                  src="/lovable-uploads/ed366094-5287-4acd-94fa-5653acdcdee9.png" 
+                  src="/lovable-uploads/564f0238-80a9-4082-bee8-22d605bb9ef9.png" 
                   alt="End-of-Life Conversation Starter Guide Preview"
                   className="w-full h-auto"
                 />
