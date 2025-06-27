@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { CheckCircle, Clock, Users, Heart, Shield, ArrowRight, Star, Quote, Download, Calendar, FileText, MessageSquare, BookOpen, Target, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -90,16 +89,24 @@ const PlaybookSales = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #f8f3f0, #ffffff)' }}>
       {/* Header */}
-      <div className="bg-white shadow-sm border-b">
+      <div className="bg-white shadow-sm border-b-2" style={{ borderColor: '#f8f3f0' }}>
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Heart className="w-6 h-6 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">Family Lyfe Fix</span>
+            <div className="flex items-center space-x-3">
+              <img 
+                src="/lovable-uploads/e3788226-80d2-4a3c-9279-757104cd413f.png" 
+                alt="Family Lyfe Fix Logo" 
+                className="h-8"
+              />
             </div>
-            <Button variant="outline" onClick={() => window.history.back()}>
+            <Button 
+              variant="outline" 
+              onClick={() => window.history.back()}
+              className="border-2"
+              style={{ borderColor: '#8da3e8', color: '#8da3e8' }}
+            >
               ← Back to Free Guide
             </Button>
           </div>
@@ -110,8 +117,8 @@ const PlaybookSales = () => {
       <div className="container mx-auto px-4 pt-12 pb-20">
         <div className="text-center max-w-4xl mx-auto">
           {/* Urgency Banner */}
-          <div className="bg-red-100 border border-red-200 rounded-lg p-4 mb-8 inline-block">
-            <div className="flex items-center justify-center space-x-2 text-red-800">
+          <div className="border-2 rounded-lg p-4 mb-8 inline-block" style={{ backgroundColor: '#ffe6e6', borderColor: '#ff8a58' }}>
+            <div className="flex items-center justify-center space-x-2" style={{ color: '#d32f2f' }}>
               <Clock className="w-5 h-5" />
               <span className="font-semibold">Early Bird Special Ends Soon:</span>
               <span className="font-mono">{timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m</span>
@@ -120,7 +127,7 @@ const PlaybookSales = () => {
 
           {/* Main Headline */}
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Get Your Family's Most Important Conversations <span className="text-blue-600">Done Right</span> – With Zero Awkwardness
+            Get Your Family's Most Important Conversations <span style={{ color: '#8da3e8' }}>Done Right</span> – With Zero Awkwardness
           </h1>
           
           {/* Subheadline */}
@@ -129,19 +136,20 @@ const PlaybookSales = () => {
           </p>
 
           {/* Price and CTA */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto mb-12 border">
+          <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto mb-12 border-2" style={{ borderColor: '#8da3e8' }}>
             <div className="text-center">
               <div className="mb-4">
-                <span className="text-3xl font-bold text-green-600">$47</span>
+                <span className="text-3xl font-bold" style={{ color: '#ff8a58' }}>$47</span>
                 <span className="text-lg text-gray-500 line-through ml-2">$67</span>
               </div>
               <p className="text-sm text-gray-600 mb-6">
                 Save $20 with Early Bird Pricing<br />
-                <span className="text-red-600 font-semibold">Price increases to $67 in 3 days</span>
+                <span className="font-semibold" style={{ color: '#d32f2f' }}>Price increases to $67 in 3 days</span>
               </p>
               <Button 
                 size="lg"
-                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 text-lg font-semibold mb-4"
+                className="w-full text-white py-4 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
+                style={{ backgroundColor: '#8da3e8' }}
               >
                 <Download className="w-5 h-5 mr-2" />
                 Get Instant Access Now
@@ -172,7 +180,7 @@ const PlaybookSales = () => {
       </div>
 
       {/* Problem/Solution Section */}
-      <div className="bg-gray-50 py-20">
+      <div className="py-20" style={{ backgroundColor: '#f8f3f0' }}>
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-16">
@@ -183,7 +191,7 @@ const PlaybookSales = () => {
             
             <div className="grid md:grid-cols-2 gap-12 items-start">
               <div>
-                <h3 className="text-2xl font-bold text-red-600 mb-6 flex items-center">
+                <h3 className="text-2xl font-bold mb-6 flex items-center" style={{ color: '#d32f2f' }}>
                   <AlertTriangle className="w-6 h-6 mr-2" />
                   The Problem:
                 </h3>
@@ -209,19 +217,19 @@ const PlaybookSales = () => {
                     <span>Nobody wants to be the one to bring it up</span>
                   </div>
                 </div>
-                <div className="mt-8 p-6 bg-red-50 rounded-lg border border-red-200">
-                  <p className="text-red-800 font-semibold">
+                <div className="mt-8 p-6 rounded-lg border-2" style={{ backgroundColor: '#ffe6e6', borderColor: '#ff8a58' }}>
+                  <p className="font-semibold" style={{ color: '#d32f2f' }}>
                     Result: Years pass, nothing gets discussed, and families face crisis situations without any guidance or clarity about their loved one's wishes.
                   </p>
                 </div>
               </div>
               
               <div>
-                <h3 className="text-2xl font-bold text-green-600 mb-6 flex items-center">
+                <h3 className="text-2xl font-bold mb-6 flex items-center" style={{ color: '#ff8a58' }}>
                   <CheckCircle className="w-6 h-6 mr-2" />
                   Your Solution:
                 </h3>
-                <div className="bg-white p-8 rounded-xl shadow-lg">
+                <div className="bg-white p-8 rounded-xl shadow-lg border-2" style={{ borderColor: '#8da3e8' }}>
                   <p className="text-gray-700 mb-6 font-semibold">
                     The End-of-Life Conversation Playbook gives you everything you need:
                   </p>
@@ -268,10 +276,10 @@ const PlaybookSales = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {features.map((feature, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow duration-300">
+              <Card key={index} className="text-center hover:shadow-lg transition-shadow duration-300 border-2" style={{ borderColor: '#f8f3f0' }}>
                 <CardContent className="p-8">
-                  <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <feature.icon className="w-8 h-8 text-blue-600" />
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#8da3e8' }}>
+                    <feature.icon className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">
                     {feature.title}
@@ -287,7 +295,7 @@ const PlaybookSales = () => {
       </div>
 
       {/* Social Proof Section */}
-      <div className="bg-blue-50 py-20">
+      <div className="py-20" style={{ backgroundColor: '#f8f3f0' }}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
@@ -323,18 +331,18 @@ const PlaybookSales = () => {
       </div>
 
       {/* Urgency Section */}
-      <div className="bg-gradient-to-r from-red-50 to-orange-50 py-16">
+      <div className="py-16" style={{ background: 'linear-gradient(45deg, #ffe6e6, #fff5f5)' }}>
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto">
-            <Clock className="w-12 h-12 text-red-600 mx-auto mb-6" />
+            <Clock className="w-12 h-12 mx-auto mb-6" style={{ color: '#ff8a58' }} />
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
               Don't Wait Until It's Too Late
             </h2>
             <p className="text-lg text-gray-700 mb-8">
               Every day that passes without these conversations is a missed opportunity for clarity and peace of mind. The price increases to $67 in just 3 days.
             </p>
-            <div className="bg-white rounded-lg p-6 inline-block shadow-lg">
-              <p className="text-2xl font-bold text-red-600 mb-2">
+            <div className="bg-white rounded-lg p-6 inline-block shadow-lg border-2" style={{ borderColor: '#ff8a58' }}>
+              <p className="text-2xl font-bold mb-2" style={{ color: '#ff8a58' }}>
                 Save $20 Today Only
               </p>
               <p className="text-gray-600">
@@ -372,7 +380,7 @@ const PlaybookSales = () => {
       </div>
 
       {/* Final CTA Section */}
-      <div className="bg-blue-600 py-20">
+      <div className="py-20" style={{ backgroundColor: '#8da3e8' }}>
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
@@ -382,19 +390,20 @@ const PlaybookSales = () => {
               Get the complete Notion template that makes these conversations natural, organized, and successful.
             </p>
             
-            <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto mb-8">
+            <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto mb-8 border-2" style={{ borderColor: '#ff8a58' }}>
               <div className="text-center">
                 <div className="mb-4">
-                  <span className="text-3xl font-bold text-green-600">$47</span>
+                  <span className="text-3xl font-bold" style={{ color: '#ff8a58' }}>$47</span>
                   <span className="text-lg text-gray-500 line-through ml-2">$67</span>
                 </div>
                 <p className="text-sm text-gray-600 mb-6">
                   Early Bird Special - Save $20<br />
-                  <span className="text-red-600 font-semibold">Offer expires in 3 days</span>
+                  <span className="font-semibold" style={{ color: '#d32f2f' }}>Offer expires in 3 days</span>
                 </p>
                 <Button 
                   size="lg"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 text-lg font-semibold mb-4"
+                  className="w-full text-white py-4 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: '#8da3e8' }}
                 >
                   <Download className="w-5 h-5 mr-2" />
                   Get Instant Access Now

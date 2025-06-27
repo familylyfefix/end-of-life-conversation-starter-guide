@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Download, CheckCircle, Clock, Users, Heart, Shield, ArrowRight, Star, Quote } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -70,18 +69,27 @@ const Index = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white">
+    <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #f8f3f0, #ffffff)' }}>
       {/* Hero Section */}
       <div className="container mx-auto px-4 pt-12 pb-20">
         <div className="text-center max-w-4xl mx-auto">
-          <Badge className="mb-6 bg-green-100 text-green-800 hover:bg-green-100">
+          {/* Brand Logo */}
+          <div className="mb-8">
+            <img 
+              src="/lovable-uploads/e3788226-80d2-4a3c-9279-757104cd413f.png" 
+              alt="Family Lyfe Fix Logo" 
+              className="h-24 mx-auto mb-4"
+            />
+          </div>
+          
+          <Badge className="mb-6" style={{ backgroundColor: '#ff8a58', color: 'white' }}>
             <Heart className="w-4 h-4 mr-2" />
             100% FREE Forever
           </Badge>
           
           {/* Primary Headline */}
           <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
-            Finally Have <span className="text-blue-600">The Conversation</span> Your Family Needs
+            Finally Have <span style={{ color: '#8da3e8' }}>The Conversation</span> Your Family Needs
           </h1>
           
           {/* Subheadline */}
@@ -90,7 +98,7 @@ const Index = () => {
           </p>
 
           {/* Download Form */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto mb-12 border">
+          <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto mb-12 border-2" style={{ borderColor: '#f8f3f0' }}>
             {!isSubmitted ? (
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="text-left">
@@ -106,12 +114,17 @@ const Index = () => {
                   placeholder="Enter your email address"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:border-transparent"
+                  style={{ 
+                    borderColor: '#f8f3f0',
+                    focusRingColor: '#8da3e8'
+                  }}
                   required
                 />
                 <Button 
                   type="submit"
-                  className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-lg font-semibold"
+                  className="w-full text-white py-3 text-lg font-semibold hover:opacity-90 transition-opacity"
+                  style={{ backgroundColor: '#8da3e8' }}
                 >
                   <Download className="w-5 h-5 mr-2" />
                   Get Instant Access (100% Free)
@@ -122,20 +135,21 @@ const Index = () => {
               </form>
             ) : (
               <div className="text-center py-4">
-                <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-4" />
+                <CheckCircle className="w-12 h-12 mx-auto mb-4" style={{ color: '#ff8a58' }} />
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">
                   Check Your Email!
                 </h3>
                 <p className="text-gray-600 mb-4">
                   Your free guide is on its way to your inbox.
                 </p>
-                <div className="border-t pt-4">
+                <div className="border-t pt-4" style={{ borderColor: '#f8f3f0' }}>
                   <p className="text-sm text-gray-600 mb-3">
                     Ready to take it to the next level?
                   </p>
                   <Button 
                     onClick={() => window.open('/playbook', '_blank')}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
+                    className="w-full text-white hover:opacity-90 transition-opacity"
+                    style={{ backgroundColor: '#ff8a58' }}
                   >
                     Get the Complete Playbook ($47)
                     <ArrowRight className="w-4 h-4 ml-2" />
@@ -164,7 +178,7 @@ const Index = () => {
       </div>
 
       {/* Problem/Solution Section */}
-      <div className="bg-gray-50 py-20">
+      <div className="py-20" style={{ backgroundColor: '#f8f3f0' }}>
         <div className="container mx-auto px-4">
           <div className="max-w-4xl mx-auto">
             <div className="text-center mb-12">
@@ -175,7 +189,7 @@ const Index = () => {
             
             <div className="grid md:grid-cols-2 gap-12 items-center">
               <div>
-                <h3 className="text-2xl font-bold text-red-600 mb-6">The Problem:</h3>
+                <h3 className="text-2xl font-bold mb-6" style={{ color: '#d32f2f' }}>The Problem:</h3>
                 <ul className="space-y-4 text-gray-700">
                   <li className="flex items-start">
                     <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
@@ -197,8 +211,8 @@ const Index = () => {
               </div>
               
               <div>
-                <h3 className="text-2xl font-bold text-green-600 mb-6">The Solution:</h3>
-                <div className="bg-white p-6 rounded-xl shadow-lg">
+                <h3 className="text-2xl font-bold mb-6" style={{ color: '#ff8a58' }}>The Solution:</h3>
+                <div className="bg-white p-6 rounded-xl shadow-lg border-2" style={{ borderColor: '#8da3e8' }}>
                   <p className="text-gray-700 mb-4">
                     Our <strong>End-of-Life Conversation Starter Guide</strong> gives you:
                   </p>
@@ -241,10 +255,10 @@ const Index = () => {
 
           <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
             {benefits.map((benefit, index) => (
-              <Card key={index} className="text-center hover:shadow-lg transition-shadow duration-300">
+              <Card key={index} className="text-center hover:shadow-lg transition-shadow duration-300 border-2" style={{ borderColor: '#f8f3f0' }}>
                 <CardContent className="p-8">
-                  <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <benefit.icon className="w-8 h-8 text-blue-600" />
+                  <div className="w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6" style={{ backgroundColor: '#8da3e8' }}>
+                    <benefit.icon className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-4">
                     {benefit.title}
@@ -260,7 +274,7 @@ const Index = () => {
       </div>
 
       {/* Social Proof Section */}
-      <div className="bg-blue-50 py-20">
+      <div className="py-20" style={{ backgroundColor: '#f8f3f0' }}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
@@ -295,18 +309,18 @@ const Index = () => {
       </div>
 
       {/* Urgency Section */}
-      <div className="bg-gradient-to-r from-blue-50 to-indigo-50 py-16">
+      <div className="py-16" style={{ background: 'linear-gradient(45deg, #f8f3f0, #ffffff)' }}>
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto">
-            <Heart className="w-12 h-12 text-blue-600 mx-auto mb-6" />
+            <Heart className="w-12 h-12 mx-auto mb-6" style={{ color: '#ff8a58' }} />
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
               Don't Wait Until It's Too Late
             </h2>
             <p className="text-lg text-gray-700 mb-8">
               Every day that passes without these conversations is a missed opportunity for clarity and peace of mind. Start today—your future self and your family will thank you.
             </p>
-            <div className="bg-white rounded-lg p-6 inline-block shadow-lg">
-              <p className="text-2xl font-bold text-blue-600 mb-2">
+            <div className="bg-white rounded-lg p-6 inline-block shadow-lg border-2" style={{ borderColor: '#8da3e8' }}>
+              <p className="text-2xl font-bold mb-2" style={{ color: '#8da3e8' }}>
                 This guide is completely FREE
               </p>
               <p className="text-gray-600">
@@ -344,7 +358,7 @@ const Index = () => {
       </div>
 
       {/* Final CTA Section */}
-      <div className="bg-blue-600 py-20">
+      <div className="py-20" style={{ backgroundColor: '#8da3e8' }}>
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto">
             <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
@@ -357,6 +371,7 @@ const Index = () => {
             <Button 
               size="lg"
               className="bg-white text-blue-600 hover:bg-gray-100 text-lg px-8 py-4 mb-6"
+              style={{ color: '#8da3e8' }}
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
             >
               <Download className="w-5 h-5 mr-2" />
@@ -370,7 +385,8 @@ const Index = () => {
               </p>
               <Button 
                 variant="outline"
-                className="border-white text-white hover:bg-white hover:text-blue-600"
+                className="border-white text-white hover:bg-white"
+                style={{ '--tw-text-opacity': '1', color: 'white' }}
                 onClick={() => window.open('/playbook', '_blank')}
               >
                 View Complete Playbook Template
