@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { CheckCircle, Clock, Users, Heart, Shield, ArrowRight, Star, Quote, Download, Calendar, FileText, MessageSquare, BookOpen, Target, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -166,7 +167,7 @@ const PlaybookSales = () => {
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                   <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
                     <iframe 
-                      src="https://www.loom.com/embed/344660889dc44f8b95bbc23b454eae42?sid=da9466ea-88e0-415f-94c1-2156b6a50a2f"
+                      src="https://drive.google.com/file/d/1rFdfhGkxMrI2o1WLa-Jsat2TcpdX-VSl/preview"
                       frameBorder="0"
                       allowFullScreen
                       style={{ 
