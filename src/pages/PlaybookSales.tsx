@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { CheckCircle, Clock, Users, Heart, Shield, ArrowRight, Star, Quote, Download, Calendar, FileText, MessageSquare, BookOpen, Target, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { usePersonalizedTimer } from '@/hooks/usePersonalizedTimer';
 
 const PlaybookSales = () => {
-  const [timeLeft, setTimeLeft] = useState({
-    days: 3,
-    hours: 14,
-    minutes: 27
-  });
+  const { timeLeft, hasExpired, isLoading, pricing } = usePersonalizedTimer();
 
   const handleGetAccess = () => {
     window.location.href = '/checkout';
@@ -85,6 +82,18 @@ const PlaybookSales = () => {
     }
   ];
 
+  // Show loading state while timer initializes
+  if (isLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(to bottom, #f8f3f0, #ffffff)' }}>
+        <div className="text-center">
+          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #f8f3f0, #ffffff)' }}>
       {/* Header */}
@@ -114,11 +123,20 @@ const PlaybookSales = () => {
       <div className="container mx-auto px-4 pt-12 pb-12">
         <div className="text-center max-w-4xl mx-auto">
           {/* Urgency Banner */}
-          <div className="border-2 rounded-lg p-4 mb-8 inline-block" style={{ backgroundColor: '#ffe6e6', borderColor: '#ff8a58' }}>
-            <div className="flex items-center justify-center space-x-2" style={{ color: '#d32f2f' }}>
+          <div className="border-2 rounded-lg p-4 mb-8 inline-block" style={{ 
+            backgroundColor: hasExpired ? '#ffebee' : '#ffe6e6', 
+            borderColor: hasExpired ? '#f44336' : '#ff8a58' 
+          }}>
+            <div className="flex items-center justify-center space-x-2" style={{ color: hasExpired ? '#c62828' : '#d32f2f' }}>
               <Clock className="w-5 h-5" />
-              <span className="font-semibold">Early Bird Special Ends Soon:</span>
-              <span className="font-mono">{timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m</span>
+              <span className="font-semibold">
+                {hasExpired ? 'Special Offer Has Ended' : 'Early Bird Special Ends Soon:'}
+              </span>
+              {!hasExpired && (
+                <span className="font-mono">
+                  {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m {timeLeft.seconds}s
+                </span>
+              )}
             </div>
           </div>
 
@@ -132,7 +150,7 @@ const PlaybookSales = () => {
             The complete step-by-step Notion template that transforms scary end-of-life discussions into meaningful family moments
           </p>
 
-          {/* Trust Indicators - Updated with 5 bullet points */}
+          {/* Trust Indicators */}
           <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-500 mb-4">
             <div className="flex items-center">
               <Download className="w-4 h-4 mr-2" />
@@ -187,19 +205,26 @@ const PlaybookSales = () => {
         </div>
       </div>
 
-      {/* Price and CTA - Made longer */}
+      {/* Price and CTA */}
       <div className="py-12">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
             <div className="bg-white rounded-2xl shadow-xl p-12 max-w-2xl mx-auto mb-12 border-2" style={{ borderColor: '#8da3e8' }}>
               <div className="text-center">
                 <div className="mb-6">
-                  <span className="text-4xl font-bold" style={{ color: '#ff8a58' }}>$47</span>
-                  <span className="text-xl text-gray-500 line-through ml-3">$67</span>
+                  <span className="text-4xl font-bold" style={{ color: '#ff8a58' }}>${pricing.current}</span>
+                  {pricing.savings > 0 && (
+                    <span className="text-xl text-gray-500 line-through ml-3">${pricing.regular}</span>
+                  )}
                 </div>
                 <p className="text-base text-gray-600 mb-8">
-                  Save $20 with Early Bird Pricing<br />
-                  <span className="font-semibold" style={{ color: '#d32f2f' }}>Price increases to $67 in 3 days</span>
+                  {hasExpired ? (
+                    <>Regular Price<br />
+                    <span className="font-semibold" style={{ color: '#666' }}>Early Bird Special Has Ended</span></>
+                  ) : (
+                    <>Save ${pricing.savings} with Early Bird Pricing<br />
+                    <span className="font-semibold" style={{ color: '#d32f2f' }}>Price increases to ${pricing.regular} when timer expires</span></>
+                  )}
                 </p>
                 <Button 
                   size="lg"
@@ -333,7 +358,7 @@ const PlaybookSales = () => {
         </div>
       </div>
 
-      {/* Social Proof Section - Updated testimonials */}
+      {/* Social Proof Section */}
       <div className="py-20" style={{ backgroundColor: '#f8f3f0' }}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -374,17 +399,25 @@ const PlaybookSales = () => {
           <div className="max-w-3xl mx-auto">
             <Clock className="w-12 h-12 mx-auto mb-6" style={{ color: '#ff8a58' }} />
             <h2 className="text-3xl font-bold text-gray-900 mb-6">
-              Don't Wait Until It's Too Late
+              {hasExpired ? "Early Bird Special Has Ended" : "Don't Wait Until It's Too Late"}
             </h2>
             <p className="text-lg text-gray-700 mb-8">
-              Every day that passes without these conversations is a missed opportunity for clarity and peace of mind. The price increases to $67 in just 3 days.
+              {hasExpired ? (
+                "The early bird discount has expired, but you can still get the complete system at the regular price."
+              ) : (
+                `Every day that passes without these conversations is a missed opportunity for clarity and peace of mind. Your early bird discount expires in ${timeLeft.days} days, ${timeLeft.hours} hours.`
+              )}
             </p>
             <div className="bg-white rounded-lg p-6 inline-block shadow-lg border-2" style={{ borderColor: '#ff8a58' }}>
               <p className="text-2xl font-bold mb-2" style={{ color: '#ff8a58' }}>
-                Save $20 Today Only
+                {hasExpired ? `Regular Price: $${pricing.current}` : `Save $${pricing.savings} - Limited Time`}
               </p>
               <p className="text-gray-600">
-                Current Price: $47 (Regular Price: $67)
+                {hasExpired ? (
+                  "Complete family conversation system"
+                ) : (
+                  `Current Price: $${pricing.current} (Regular Price: $${pricing.regular})`
+                )}
               </p>
             </div>
           </div>
@@ -417,7 +450,7 @@ const PlaybookSales = () => {
         </div>
       </div>
 
-      {/* Final CTA Section - Added third bullet point */}
+      {/* Final CTA Section */}
       <div className="py-20" style={{ backgroundColor: '#8da3e8' }}>
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto">
@@ -431,12 +464,21 @@ const PlaybookSales = () => {
             <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto mb-8 border-2" style={{ borderColor: '#ff8a58' }}>
               <div className="text-center">
                 <div className="mb-4">
-                  <span className="text-3xl font-bold" style={{ color: '#ff8a58' }}>$47</span>
-                  <span className="text-lg text-gray-500 line-through ml-2">$67</span>
+                  <span className="text-3xl font-bold" style={{ color: '#ff8a58' }}>${pricing.current}</span>
+                  {pricing.savings > 0 && (
+                    <span className="text-lg text-gray-500 line-through ml-2">${pricing.regular}</span>
+                  )}
                 </div>
                 <p className="text-sm text-gray-600 mb-6">
-                  Early Bird Special - Save $20<br />
-                  <span className="font-semibold" style={{ color: '#d32f2f' }}>Offer expires in 3 days</span>
+                  {hasExpired ? (
+                    <>Regular Price<br />
+                    <span className="font-semibold" style={{ color: '#666' }}>Complete family conversation system</span></>
+                  ) : (
+                    <>Early Bird Special - Save ${pricing.savings}<br />
+                    <span className="font-semibold" style={{ color: '#d32f2f' }}>
+                      Offer expires in {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m
+                    </span></>
+                  )}
                 </p>
                 <Button 
                   size="lg"
