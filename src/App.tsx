@@ -9,6 +9,7 @@ import NotFound from "./pages/NotFound";
 import PlaybookSales from "./pages/PlaybookSales";
 import Funnel from "./pages/Funnel";
 import Checkout from "./pages/Checkout";
+import PaymentSuccess from "./pages/PaymentSuccess";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/playbook" element={<PlaybookSales />} />
           <Route path="/funnel" element={<Funnel />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/payment-success" element={<PaymentSuccess />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

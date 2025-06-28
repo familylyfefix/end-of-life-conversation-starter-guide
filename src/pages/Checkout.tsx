@@ -5,21 +5,21 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { supabase } from '@/integrations/supabase/client';
+import { useToast } from '@/components/ui/use-toast';
 
 const Checkout = () => {
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
     email: '',
-    cardNumber: '',
-    expiryDate: '',
-    cvv: '',
     billingAddress: '',
     city: '',
     zipCode: ''
   });
 
   const [isProcessing, setIsProcessing] = useState(false);
+  const { toast } = useToast();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -30,13 +30,48 @@ const Checkout = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.firstName || !formData.lastName || !formData.email) {
+      toast({
+        title: "Missing Information",
+        description: "Please fill in all required fields.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     setIsProcessing(true);
     
-    // Simulate processing
-    setTimeout(() => {
+    try {
+      // Call Stripe payment function
+      const { data, error } = await supabase.functions.invoke('create-payment', {
+        body: {
+          customerEmail: formData.email,
+          customerName: `${formData.firstName} ${formData.lastName}`
+        }
+      });
+
+      if (error) {
+        throw error;
+      }
+
+      if (data?.url) {
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL received');
+      }
+    } catch (error) {
+      console.error('Payment error:', error);
+      toast({
+        title: "Payment Error",
+        description: "There was an issue processing your payment. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
       setIsProcessing(false);
-      alert('Order processed successfully!');
-    }, 2000);
+    }
   };
 
   const features = [
@@ -257,51 +292,6 @@ const Checkout = () => {
                           placeholder="your@email.com"
                         />
                         <p className="text-xs text-gray-500 mt-1">Your download link will be sent here</p>
-                      </div>
-                    </div>
-
-                    {/* Payment Information */}
-                    <div>
-                      <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
-                        <CreditCard className="w-5 h-5 mr-2" />
-                        Payment Information
-                      </h3>
-                      <div className="space-y-4">
-                        <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Card Number *</label>
-                          <Input
-                            name="cardNumber"
-                            value={formData.cardNumber}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="1234 5678 9012 3456"
-                            className="w-full"
-                          />
-                        </div>
-                        <div className="grid md:grid-cols-2 gap-4">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Expiry Date *</label>
-                            <Input
-                              name="expiryDate"
-                              value={formData.expiryDate}
-                              onChange={handleInputChange}
-                              required
-                              placeholder="MM/YY"
-                              className="w-full"
-                            />
-                          </div>
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">CVV *</label>
-                            <Input
-                              name="cvv"
-                              value={formData.cvv}
-                              onChange={handleInputChange}
-                              required
-                              placeholder="123"
-                              className="w-full"
-                            />
-                          </div>
-                        </div>
                       </div>
                     </div>
 
