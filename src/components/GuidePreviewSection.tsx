@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CheckCircle, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -18,26 +17,24 @@ const GuidePreviewSection = () => {
           </div>
           
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Loom Video */}
+            {/* PDF Mockup */}
             <div className="relative">
-              <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-8 rounded-2xl shadow-2xl">
+              <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-8 rounded-2xl shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                  <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
-                    <iframe 
-                      src="https://www.loom.com/embed/344660889dc44f8b95bbc23b454eae42?sid=ac091c65-5e88-412d-8a25-3722eda33569"
-                      frameBorder="0"
-                      allowFullScreen
-                      style={{ 
-                        position: 'absolute', 
-                        top: 0, 
-                        left: 0, 
-                        width: '100%', 
-                        height: '100%',
-                        borderRadius: '8px'
-                      }}
-                    ></iframe>
-                  </div>
+                  <img 
+                    src="/lovable-uploads/ed366094-5287-4acd-94fa-5653acdcdee9.png" 
+                    alt="End-of-Life Conversation Starter Guide Preview"
+                    className="w-full h-auto"
+                  />
                 </div>
+              </div>
+              {/* Additional pages mockup */}
+              <div className="absolute -bottom-4 -right-4 bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-lg transform -rotate-2 z-10">
+                <img 
+                  src="/lovable-uploads/f0ca72cf-bdb9-43bb-854a-4e99ccfccfd4.png" 
+                  alt="Guide Interior Page Preview"
+                  className="w-48 h-auto rounded-lg shadow-md"
+                />
               </div>
             </div>
 
