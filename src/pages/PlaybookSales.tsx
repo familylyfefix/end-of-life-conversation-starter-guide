@@ -134,18 +134,34 @@ const PlaybookSales = () => {
             The complete step-by-step Notion template that transforms scary end-of-life discussions into meaningful family moments
           </p>
 
-          {/* Trust Indicators - Updated */}
-          <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500">
+          {/* Trust Indicators - Updated with 5 bullet points */}
+          <div className="flex flex-wrap justify-center items-center gap-6 text-sm text-gray-500 mb-4">
             <div className="flex items-center">
               <Download className="w-4 h-4 mr-2" />
               Instant Access
+            </div>
+            <div className="flex items-center">
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Complete System
+            </div>
+            <div className="flex items-center">
+              <FileText className="w-4 h-4 mr-2" />
+              Word-for-Word Scripts
+            </div>
+            <div className="flex items-center">
+              <Users className="w-4 h-4 mr-2" />
+              Family Coordination Tools
+            </div>
+            <div className="flex items-center">
+              <Target className="w-4 h-4 mr-2" />
+              Step-by-Step Framework
             </div>
           </div>
         </div>
       </div>
 
-      {/* Video Preview Section - Reduced top padding */}
-      <div className="py-8">
+      {/* Video Preview Section */}
+      <div className="py-4">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="max-w-4xl mx-auto">
@@ -173,11 +189,11 @@ const PlaybookSales = () => {
         </div>
       </div>
 
-      {/* Price and CTA - Increased size */}
+      {/* Price and CTA - Made longer */}
       <div className="py-12">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl p-12 max-w-lg mx-auto mb-12 border-2" style={{ borderColor: '#8da3e8' }}>
+            <div className="bg-white rounded-2xl shadow-xl p-12 max-w-2xl mx-auto mb-12 border-2" style={{ borderColor: '#8da3e8' }}>
               <div className="text-center">
                 <div className="mb-6">
                   <span className="text-4xl font-bold" style={{ color: '#ff8a58' }}>$47</span>
@@ -403,7 +419,7 @@ const PlaybookSales = () => {
         </div>
       </div>
 
-      {/* Final CTA Section */}
+      {/* Final CTA Section - Added third bullet point */}
       <div className="py-20" style={{ backgroundColor: '#8da3e8' }}>
         <div className="container mx-auto px-4 text-center">
           <div className="max-w-3xl mx-auto">
@@ -437,6 +453,7 @@ const PlaybookSales = () => {
                 <div className="space-y-2 text-xs text-gray-500">
                   <p>✓ Instant download after purchase</p>
                   <p>✓ Digital product</p>
+                  <p>✓ Complete family conversation system</p>
                 </div>
               </div>
             </div>
@@ -461,4 +478,3 @@ const PlaybookSales = () => {
 };
 
 export default PlaybookSales;
-
