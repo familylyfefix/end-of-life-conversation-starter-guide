@@ -1,4 +1,5 @@
 
+
 import React, { useState } from 'react';
 import { CheckCircle, Clock, Users, Heart, Shield, ArrowRight, Star, Quote, Download, Calendar, FileText, MessageSquare, BookOpen, Target, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -53,20 +54,17 @@ const PlaybookSales = () => {
     {
       name: "Margaret K.",
       text: "This template gave me the structure I desperately needed. My family finally had the conversation we'd been avoiding for years, and it wasn't scary at all.",
-      rating: 5,
-      situation: "Used with aging parents"
+      rating: 5
     },
     {
       name: "David R.",
       text: "The scripts were perfect. I didn't have to guess what to say anymore. My spouse and I completed our entire end-of-life plan in just 3 conversations.",
-      rating: 5,
-      situation: "Used with spouse and adult children"
+      rating: 5
     },
     {
       name: "Lisa M.",
       text: "Worth every penny. The preparation checklist alone saved me hours of research. My family now has complete clarity on everyone's wishes.",
-      rating: 5,
-      situation: "Used for multi-generational planning"
+      rating: 5
     }
   ];
 
@@ -86,10 +84,6 @@ const PlaybookSales = () => {
     {
       question: "Can I customize this for my specific family situation?",
       answer: "Absolutely! The template is fully customizable. You can adapt the scripts, add your own topics, and modify the tracking systems to fit your family's unique needs and dynamics."
-    },
-    {
-      question: "What if I need help using the template?",
-      answer: "You'll get email support from our team, plus access to our private community where other families share their experiences and tips for success."
     }
   ];
 
@@ -119,7 +113,7 @@ const PlaybookSales = () => {
       </div>
 
       {/* Hero Section */}
-      <div className="container mx-auto px-4 pt-12 pb-20">
+      <div className="container mx-auto px-4 pt-12 pb-12">
         <div className="text-center max-w-4xl mx-auto">
           {/* Urgency Banner */}
           <div className="border-2 rounded-lg p-4 mb-8 inline-block" style={{ backgroundColor: '#ffe6e6', borderColor: '#ff8a58' }}>
@@ -137,29 +131,21 @@ const PlaybookSales = () => {
           
           {/* Subheadline */}
           <p className="text-xl md:text-2xl text-gray-600 mb-8 leading-relaxed">
-            The complete step-by-step Notion template that transforms scary end-of-life discussions into meaningful family moments – used by 500+ families to create lasting peace of mind
+            The complete step-by-step Notion template that transforms scary end-of-life discussions into meaningful family moments
           </p>
 
-          {/* Trust Indicators */}
+          {/* Trust Indicators - Updated */}
           <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500">
-            <div className="flex items-center">
-              <Shield className="w-4 h-4 mr-2" />
-              30-Day Guarantee
-            </div>
             <div className="flex items-center">
               <Download className="w-4 h-4 mr-2" />
               Instant Access
-            </div>
-            <div className="flex items-center">
-              <Heart className="w-4 h-4 mr-2" />
-              500+ Happy Families
             </div>
           </div>
         </div>
       </div>
 
-      {/* Video Preview Section - Moved to top */}
-      <div className="py-20">
+      {/* Video Preview Section - Reduced top padding */}
+      <div className="py-8">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
             <div className="max-w-4xl mx-auto">
@@ -187,32 +173,32 @@ const PlaybookSales = () => {
         </div>
       </div>
 
-      {/* Price and CTA - Moved down after video */}
+      {/* Price and CTA - Increased size */}
       <div className="py-12">
         <div className="container mx-auto px-4">
           <div className="text-center max-w-4xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto mb-12 border-2" style={{ borderColor: '#8da3e8' }}>
+            <div className="bg-white rounded-2xl shadow-xl p-12 max-w-lg mx-auto mb-12 border-2" style={{ borderColor: '#8da3e8' }}>
               <div className="text-center">
-                <div className="mb-4">
-                  <span className="text-3xl font-bold" style={{ color: '#ff8a58' }}>$47</span>
-                  <span className="text-lg text-gray-500 line-through ml-2">$67</span>
+                <div className="mb-6">
+                  <span className="text-4xl font-bold" style={{ color: '#ff8a58' }}>$47</span>
+                  <span className="text-xl text-gray-500 line-through ml-3">$67</span>
                 </div>
-                <p className="text-sm text-gray-600 mb-6">
+                <p className="text-base text-gray-600 mb-8">
                   Save $20 with Early Bird Pricing<br />
                   <span className="font-semibold" style={{ color: '#d32f2f' }}>Price increases to $67 in 3 days</span>
                 </p>
                 <Button 
                   size="lg"
-                  className="w-full text-white py-4 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
+                  className="w-full text-white py-6 text-xl font-semibold mb-6 hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: '#8da3e8' }}
                   onClick={handleGetAccess}
                 >
-                  <Download className="w-5 h-5 mr-2" />
+                  <Download className="w-6 h-6 mr-3" />
                   Get Instant Access Now
-                  <ArrowRight className="w-5 h-5 ml-2" />
+                  <ArrowRight className="w-6 h-6 ml-3" />
                 </Button>
-                <p className="text-xs text-gray-500">
-                  Instant download • 30-day money-back guarantee
+                <p className="text-sm text-gray-500">
+                  Instant download • Digital product
                 </p>
               </div>
             </div>
@@ -333,7 +319,7 @@ const PlaybookSales = () => {
         </div>
       </div>
 
-      {/* Social Proof Section */}
+      {/* Social Proof Section - Updated testimonials */}
       <div className="py-20" style={{ backgroundColor: '#f8f3f0' }}>
         <div className="container mx-auto px-4">
           <div className="text-center mb-16">
@@ -360,7 +346,6 @@ const PlaybookSales = () => {
                   </p>
                   <div>
                     <p className="font-semibold text-gray-900">{testimonial.name}</p>
-                    <p className="text-sm text-gray-600">{testimonial.situation}</p>
                   </div>
                 </CardContent>
               </Card>
@@ -451,14 +436,13 @@ const PlaybookSales = () => {
                 </Button>
                 <div className="space-y-2 text-xs text-gray-500">
                   <p>✓ Instant download after purchase</p>
-                  <p>✓ 30-day money-back guarantee</p>
-                  <p>✓ Email support included</p>
+                  <p>✓ Digital product</p>
                 </div>
               </div>
             </div>
             
             <p className="text-blue-200 text-sm">
-              Join 500+ families who have successfully used this system
+              Join families who have successfully used this system
             </p>
           </div>
         </div>
@@ -477,3 +461,4 @@ const PlaybookSales = () => {
 };
 
 export default PlaybookSales;
+
