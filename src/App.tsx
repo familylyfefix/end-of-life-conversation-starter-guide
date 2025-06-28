@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import PlaybookSales from "./pages/PlaybookSales";
+import Funnel from "./pages/Funnel";
 
 const queryClient = new QueryClient();
 
