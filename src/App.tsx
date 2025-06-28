@@ -21,6 +21,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Navigate to="/end-of-life-conversation-starter-guide" replace />} />
           <Route path="/end-of-life-conversation-starter-guide" element={<Index />} />
+          <Route path="/end-of-life-playbook" element={<PlaybookSales />} />
           <Route path="/playbook" element={<PlaybookSales />} />
           <Route path="/funnel" element={<Funnel />} />
           <Route path="/checkout" element={<Checkout />} />
