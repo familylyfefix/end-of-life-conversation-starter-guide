@@ -1,48 +1,24 @@
 
-import React, { useState } from 'react';
-import { Download, CheckCircle, Heart, Shield, ArrowRight } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import React, { useEffect } from 'react';
+import { Heart, Shield, Download } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 const HeroSection = () => {
-  const [email, setEmail] = useState('');
-  const [isSubmitted, setIsSubmitted] = useState(false);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  useEffect(() => {
+    // Load ConvertKit script
+    const script = document.createElement('script');
+    script.src = 'https://f.convertkit.com/ckjs/ck.5.js';
+    script.async = true;
+    document.head.appendChild(script);
 
-  // Replace this URL with your actual Systeme.io form action URL
-  const SYSTEME_IO_FORM_URL = "https://your-systeme-io-form-url.com/form";
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!email) return;
-
-    setIsSubmitting(true);
-    console.log('Submitting email to Systeme.io:', email);
-
-    try {
-      // Create form data for Systeme.io
-      const formData = new FormData();
-      formData.append('email', email);
-      formData.append('source', 'landing-page');
-
-      const response = await fetch(SYSTEME_IO_FORM_URL, {
-        method: 'POST',
-        body: formData,
-        mode: 'no-cors' // Systeme.io forms typically require no-cors mode
-      });
-
-      // Since we're using no-cors, we can't check response status
-      // We'll assume success and show the thank you message
-      setIsSubmitted(true);
-      console.log('Email submitted successfully to Systeme.io');
-    } catch (error) {
-      console.error('Error submitting to Systeme.io:', error);
-      // Still show success message since no-cors prevents error detection
-      setIsSubmitted(true);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+    return () => {
+      // Cleanup script when component unmounts
+      const existingScript = document.querySelector('script[src="https://f.convertkit.com/ckjs/ck.5.js"]');
+      if (existingScript) {
+        existingScript.remove();
+      }
+    };
+  }, []);
 
   return (
     <div className="container mx-auto px-4 pt-12 pb-20">
@@ -80,66 +56,104 @@ const HeroSection = () => {
           />
         </div>
 
-        {/* Download Form */}
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto mb-12 border-2" style={{ borderColor: '#f8f3f0' }}>
-          {!isSubmitted ? (
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="text-left">
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  Download Your FREE Guide Now
-                </h3>
-                <p className="text-sm text-gray-600 mb-4">
-                  Get instant access to our comprehensive conversation starter guide
-                </p>
-              </div>
-              <input
-                type="email"
-                name="email"
-                placeholder="Enter your email address"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border-2 rounded-lg focus:ring-2 focus:ring-blue-300 focus:border-transparent"
-                style={{ borderColor: '#f8f3f0' }}
-                required
-                disabled={isSubmitting}
-              />
-              <Button 
-                type="submit"
-                className="w-full text-white py-3 text-lg font-semibold hover:opacity-90 transition-opacity"
-                style={{ backgroundColor: '#8da3e8' }}
-                disabled={isSubmitting}
-              >
-                <Download className="w-5 h-5 mr-2" />
-                {isSubmitting ? 'Sending...' : 'Get Instant Access (100% Free)'}
-              </Button>
-              <p className="text-xs text-gray-500 text-center">
-                No spam. Unsubscribe anytime. Your privacy is protected.
-              </p>
-            </form>
-          ) : (
-            <div className="text-center py-4">
-              <CheckCircle className="w-12 h-12 mx-auto mb-4" style={{ color: '#ff8a58' }} />
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                Check Your Email!
-              </h3>
-              <p className="text-gray-600 mb-4">
-                Your free guide is on its way to your inbox.
-              </p>
-              <div className="border-t pt-4" style={{ borderColor: '#f8f3f0' }}>
-                <p className="text-sm text-gray-600 mb-3">
-                  Ready to take it to the next level?
-                </p>
-                <Button 
-                  onClick={() => window.open('/playbook', '_blank')}
-                  className="w-full text-white hover:opacity-90 transition-opacity"
-                  style={{ backgroundColor: '#ff8a58' }}
-                >
-                  Get the Complete Playbook ($47)
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </div>
-            </div>
-          )}
+        {/* ConvertKit Form */}
+        <div className="max-w-2xl mx-auto mb-12">
+          <div 
+            dangerouslySetInnerHTML={{
+              __html: `
+                <form action="https://app.kit.com/forms/8243832/subscriptions" class="seva-form formkit-form" method="post" data-sv-form="8243832" data-uid="099ebad777" data-format="inline" data-version="5" data-options="{&quot;settings&quot;:{&quot;after_subscribe&quot;:{&quot;action&quot;:&quot;message&quot;,&quot;success_message&quot;:&quot;Success! Now check your email to confirm your subscription.&quot;,&quot;redirect_url&quot;:&quot;&quot;},&quot;analytics&quot;:{&quot;google&quot;:null,&quot;fathom&quot;:null,&quot;facebook&quot;:null,&quot;segment&quot;:null,&quot;pinterest&quot;:null,&quot;sparkloop&quot;:null,&quot;googletagmanager&quot;:null},&quot;modal&quot;:{&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15},&quot;powered_by&quot;:{&quot;show&quot;:false,&quot;url&quot;:&quot;https://kit.com/features/forms?utm_campaign=poweredby&amp;utm_content=form&amp;utm_medium=referral&amp;utm_source=dynamic&quot;},&quot;recaptcha&quot;:{&quot;enabled&quot;:false},&quot;return_visitor&quot;:{&quot;action&quot;:&quot;show&quot;,&quot;custom_content&quot;:&quot;&quot;},&quot;slide_in&quot;:{&quot;display_in&quot;:&quot;bottom_right&quot;,&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15},&quot;sticky_bar&quot;:{&quot;display_in&quot;:&quot;top&quot;,&quot;trigger&quot;:&quot;timer&quot;,&quot;scroll_percentage&quot;:null,&quot;timer&quot;:5,&quot;devices&quot;:&quot;all&quot;,&quot;show_once_every&quot;:15}},&quot;version&quot;:&quot;5&quot;}" min-width="400 500 600 700 800" style="background-color: rgb(255, 255, 255); border-radius: 6px; box-shadow: 0 2px 15px 0 rgba(210,214,220,0.5); max-width: 700px; overflow: hidden; margin: 0 auto;">
+                  <div data-style="full">
+                    <div data-element="column" class="formkit-column" style="background-color: rgb(249, 250, 251); padding: 40px; position: relative;">
+                      <div class="formkit-background" style="opacity: 0.3;"></div>
+                      <div class="formkit-header" data-element="header" style="color: rgb(77, 77, 77); font-size: 20px; font-weight: 700; margin-top: 0; margin-bottom: 20px; z-index: 2; position: relative;">
+                        <h2>Download Your FREE Guide Now</h2>
+                      </div>
+                      <div class="formkit-subheader" data-element="subheader" style="color: rgb(104, 104, 104); font-size: 15px; margin: 15px 0; z-index: 2; position: relative;">
+                        <p>Get instant access to your End-of-Life Conversation Starter Guide</p>
+                      </div>
+                      <div class="formkit-image formkit-image relative focus:outline-none" role="button" tabindex="0" style="z-index: 2; position: relative;">
+                        <img class="cursor-pointer focus:outline-blue" src="https://embed.filekitcdn.com/e/7FuyG31Wt7UTxDaCZFVzX6/fymMjtvx6PnpDjfG7CH9N1" style="max-width: 100%;">
+                      </div>
+                    </div>
+                    <div data-element="column" class="formkit-column" style="padding: 40px; position: relative;">
+                      <ul class="formkit-alert formkit-alert-error" data-element="errors" data-group="alert"></ul>
+                      <div data-element="fields" class="seva-fields formkit-fields">
+                        <div class="formkit-field" style="margin: 0 0 15px 0;">
+                          <input class="formkit-input" aria-label="First Name" name="fields[first_name]" placeholder="First Name" type="text" style="color: rgb(0, 0, 0); border-color: rgb(227, 227, 227); border-radius: 4px; font-weight: 400; background: #ffffff; font-size: 15px; padding: 12px; border: 1px solid #e3e3e3; width: 100%; line-height: 1.4; margin: 0; transition: border-color ease-out 300ms;">
+                        </div>
+                        <div class="formkit-field" style="margin: 0 0 15px 0;">
+                          <input class="formkit-input" name="email_address" aria-label="Email Address" placeholder="Email Address" required="" type="email" style="color: rgb(0, 0, 0); border-color: rgb(227, 227, 227); border-radius: 4px; font-weight: 400; background: #ffffff; font-size: 15px; padding: 12px; border: 1px solid #e3e3e3; width: 100%; line-height: 1.4; margin: 0; transition: border-color ease-out 300ms;">
+                        </div>
+                        <button data-element="submit" class="formkit-submit formkit-submit" style="color: rgb(255, 255, 255); background-color: rgb(141, 163, 232); border-radius: 24px; font-weight: 700; border: 0; cursor: pointer; display: inline-block; text-align: center; font-size: 15px; margin-bottom: 15px; overflow: hidden; padding: 0; position: relative; vertical-align: middle; width: 100%;">
+                          <div class="formkit-spinner" style="display: flex; height: 0px; width: 0px; margin: 0 auto; position: absolute; top: 0; left: 0; right: 0; overflow: hidden; text-align: center; transition: all 300ms ease-in-out;">
+                            <div style="margin: auto; width: 12px; height: 12px; background-color: #fff; opacity: 0.3; border-radius: 100%; display: inline-block; animation: formkit-bouncedelay-formkit-form-data-uid-099ebad777- 1.4s infinite ease-in-out both; animation-delay: -0.32s;"></div>
+                            <div style="margin: auto; width: 12px; height: 12px; background-color: #fff; opacity: 0.3; border-radius: 100%; display: inline-block; animation: formkit-bouncedelay-formkit-form-data-uid-099ebad777- 1.4s infinite ease-in-out both; animation-delay: -0.16s;"></div>
+                            <div style="margin: auto; width: 12px; height: 12px; background-color: #fff; opacity: 0.3; border-radius: 100%; display: inline-block; animation: formkit-bouncedelay-formkit-form-data-uid-099ebad777- 1.4s infinite ease-in-out both;"></div>
+                          </div>
+                          <span style="display: block; transition: all 300ms ease-in-out; padding: 12px 24px;">Subscribe</span>
+                        </button>
+                      </div>
+                      <div class="formkit-guarantee" data-element="guarantee" style="color: rgb(77, 77, 77); font-size: 13px; font-weight: 400; margin: 0 0 15px 0;">
+                        We respect your privacy. Unsubscribe at any time.
+                      </div>
+                    </div>
+                  </div>
+                </form>
+
+                <style>
+                  @keyframes formkit-bouncedelay-formkit-form-data-uid-099ebad777- {
+                    0%, 80%, 100% { 
+                      transform: scale(0);
+                    } 
+                    40% { 
+                      transform: scale(1);
+                    }
+                  }
+                  
+                  .formkit-form[data-uid="099ebad777"] .formkit-input:focus {
+                    outline: none;
+                    border-color: #8da3e8;
+                    transition: border-color ease 300ms;
+                  }
+                  
+                  .formkit-form[data-uid="099ebad777"] .formkit-submit:hover > span {
+                    background-color: rgba(0,0,0,0.1);
+                  }
+                  
+                  .formkit-form[data-uid="099ebad777"] .formkit-submit[data-active] .formkit-spinner {
+                    opacity: 1;
+                    height: 100%;
+                    width: 50px;
+                  }
+                  
+                  .formkit-form[data-uid="099ebad777"] .formkit-submit[data-active] .formkit-spinner ~ span {
+                    opacity: 0;
+                  }
+                  
+                  @media (max-width: 600px) {
+                    .formkit-form[data-uid="099ebad777"] [data-style="full"] {
+                      display: block;
+                    }
+                    
+                    .formkit-form[data-uid="099ebad777"] .formkit-column {
+                      padding: 20px;
+                    }
+                  }
+                  
+                  @media (min-width: 600px) {
+                    .formkit-form[data-uid="099ebad777"] [data-style="full"] {
+                      display: grid;
+                      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                    }
+                    
+                    .formkit-form[data-uid="099ebad777"] .formkit-column:nth-child(2) {
+                      border-top: none;
+                    }
+                  }
+                </style>
+              `
+            }}
+          />
         </div>
 
         {/* Trust Indicators */}
