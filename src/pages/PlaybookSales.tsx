@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { CheckCircle, Clock, Users, Heart, Shield, ArrowRight, Star, Quote, Download, Calendar, FileText, MessageSquare, BookOpen, Target, AlertTriangle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -140,33 +139,6 @@ const PlaybookSales = () => {
             The complete step-by-step Notion template that transforms scary end-of-life discussions into meaningful family moments – used by 500+ families to create lasting peace of mind
           </p>
 
-          {/* Price and CTA */}
-          <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto mb-12 border-2" style={{ borderColor: '#8da3e8' }}>
-            <div className="text-center">
-              <div className="mb-4">
-                <span className="text-3xl font-bold" style={{ color: '#ff8a58' }}>$47</span>
-                <span className="text-lg text-gray-500 line-through ml-2">$67</span>
-              </div>
-              <p className="text-sm text-gray-600 mb-6">
-                Save $20 with Early Bird Pricing<br />
-                <span className="font-semibold" style={{ color: '#d32f2f' }}>Price increases to $67 in 3 days</span>
-              </p>
-              <Button 
-                size="lg"
-                className="w-full text-white py-4 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
-                style={{ backgroundColor: '#8da3e8' }}
-                onClick={handleGetAccess}
-              >
-                <Download className="w-5 h-5 mr-2" />
-                Get Instant Access Now
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-              <p className="text-xs text-gray-500">
-                Instant download • 30-day money-back guarantee
-              </p>
-            </div>
-          </div>
-
           {/* Trust Indicators */}
           <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500">
             <div className="flex items-center">
@@ -185,19 +157,10 @@ const PlaybookSales = () => {
         </div>
       </div>
 
-      {/* Video Preview Section */}
+      {/* Video Preview Section - Moved to top */}
       <div className="py-20">
         <div className="container mx-auto px-4">
           <div className="max-w-6xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-                See the Complete System in Action
-              </h2>
-              <p className="text-xl text-gray-600">
-                Watch how the End-of-Life Conversation Playbook works and transforms difficult conversations into meaningful family moments
-              </p>
-            </div>
-            
             <div className="max-w-4xl mx-auto">
               <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-8 rounded-2xl shadow-2xl">
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
@@ -218,18 +181,38 @@ const PlaybookSales = () => {
                   </div>
                 </div>
               </div>
-              
-              <div className="text-center mt-8">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Price and CTA - Moved down after video */}
+      <div className="py-12">
+        <div className="container mx-auto px-4">
+          <div className="text-center max-w-4xl mx-auto">
+            <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md mx-auto mb-12 border-2" style={{ borderColor: '#8da3e8' }}>
+              <div className="text-center">
+                <div className="mb-4">
+                  <span className="text-3xl font-bold" style={{ color: '#ff8a58' }}>$47</span>
+                  <span className="text-lg text-gray-500 line-through ml-2">$67</span>
+                </div>
+                <p className="text-sm text-gray-600 mb-6">
+                  Save $20 with Early Bird Pricing<br />
+                  <span className="font-semibold" style={{ color: '#d32f2f' }}>Price increases to $67 in 3 days</span>
+                </p>
                 <Button 
                   size="lg"
-                  className="text-white px-8 py-4 text-lg font-semibold hover:opacity-90 transition-opacity"
+                  className="w-full text-white py-4 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: '#8da3e8' }}
                   onClick={handleGetAccess}
                 >
                   <Download className="w-5 h-5 mr-2" />
-                  Get Your Copy Now - $47
+                  Get Instant Access Now
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
+                <p className="text-xs text-gray-500">
+                  Instant download • 30-day money-back guarantee
+                </p>
               </div>
             </div>
           </div>
