@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Check, Shield, Lock, CheckCircle, Star } from 'lucide-react';
+import { Check, Shield, Lock, Star } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 
@@ -14,12 +14,12 @@ interface OrderSummaryProps {
 
 const OrderSummary = ({ pricing }: OrderSummaryProps) => {
   const features = [
-    "Complete conversation starter guide",
-    "Word-for-word scripts for difficult topics",
-    "Family meeting planning templates",
-    "Legal document checklist",
-    "Healthcare directive guidance",
-    "Funeral planning worksheets"
+    "Complete Preparation System",
+    "Conversation Scripts Library", 
+    "Meeting Planning & Tracking",
+    "Topic-by-Topic Guidance",
+    "Family Coordination Tools",
+    "Follow-Up Framework"
   ];
 
   const testimonials = [
@@ -103,10 +103,6 @@ const OrderSummary = ({ pricing }: OrderSummaryProps) => {
             <div className="flex items-center">
               <Lock className="w-4 h-4 mr-1" />
               <span>SSL Encrypted</span>
-            </div>
-            <div className="flex items-center">
-              <CheckCircle className="w-4 h-4 mr-1" />
-              <span>30-Day Guarantee</span>
             </div>
           </div>
         </div>
