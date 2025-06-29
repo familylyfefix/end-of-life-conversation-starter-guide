@@ -5,11 +5,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { AlertDialogSimple } from '@/components/ui/alert-dialog-simple';
 
 const PaymentSuccess = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [downloadsRemaining, setDownloadsRemaining] = useState<number | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const [showErrorDialog, setShowErrorDialog] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -21,11 +24,8 @@ const PaymentSuccess = () => {
 
   const handleSecureDownload = async () => {
     if (!sessionId) {
-      toast({
-        title: "Error",
-        description: "No session ID found. Please contact support.",
-        variant: "destructive",
-      });
+      setErrorMessage("No session ID found. Please contact support with your order details.");
+      setShowErrorDialog(true);
       return;
     }
 
@@ -59,24 +59,21 @@ const PaymentSuccess = () => {
     } catch (error) {
       console.error('Download error:', error);
       
-      let errorMessage = 'Failed to generate download link. Please try again.';
+      let errorMsg = 'Failed to generate download link. Please try again.';
       
       if (error instanceof Error) {
         const message = error.message.toLowerCase();
         if (message.includes('expired')) {
-          errorMessage = 'Your download link has expired. Please contact support for assistance.';
+          errorMsg = 'Your download link has expired. Please contact support for assistance.';
         } else if (message.includes('limit exceeded')) {
-          errorMessage = 'You have reached the maximum number of downloads for this purchase.';
+          errorMsg = 'You have reached the maximum number of downloads for this purchase.';
         } else if (message.includes('not found')) {
-          errorMessage = 'Purchase not found. Please contact support with your order details.';
+          errorMsg = 'Purchase not found. Please contact support with your order details.';
         }
       }
       
-      toast({
-        title: "Download Error",
-        description: errorMessage,
-        variant: "destructive",
-      });
+      setErrorMessage(errorMsg);
+      setShowErrorDialog(true);
     } finally {
       setIsDownloading(false);
     }
@@ -243,6 +240,15 @@ const PaymentSuccess = () => {
           </div>
         </div>
       </div>
+
+      {/* Error Dialog */}
+      <AlertDialogSimple
+        open={showErrorDialog}
+        onOpenChange={setShowErrorDialog}
+        title="Download Error"
+        description={errorMessage}
+        confirmText="OK"
+      />
     </div>
   );
 };
