@@ -77,14 +77,23 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
       
       let errorMessage = 'There was an issue processing your payment. Please try again.';
       
-      // Provide more specific error messages
+      // Provide more specific error messages based on the error type
       if (error instanceof Error) {
-        if (error.message.includes('network') || error.message.includes('fetch')) {
+        const message = error.message.toLowerCase();
+        
+        if (message.includes('stripe') && message.includes('api key')) {
+          errorMessage = 'Payment system configuration error. Please contact support.';
+        } else if (message.includes('network') || message.includes('fetch')) {
           errorMessage = 'Network error. Please check your connection and try again.';
-        } else if (error.message.includes('invalid') || error.message.includes('validation')) {
-          errorMessage = 'Invalid payment information. Please check your details and try again.';
-        } else if (error.message) {
-          errorMessage = error.message;
+        } else if (message.includes('invalid') || message.includes('validation')) {
+          errorMessage = 'Please check your information and try again.';
+        } else if (message.includes('timeout')) {
+          errorMessage = 'Request timed out. Please try again.';
+        } else if (error.message && error.message.length > 0) {
+          // Only show specific error messages if they seem user-friendly
+          if (!message.includes('function') && !message.includes('undefined')) {
+            errorMessage = error.message;
+          }
         }
       }
       
