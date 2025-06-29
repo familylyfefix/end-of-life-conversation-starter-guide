@@ -6,21 +6,11 @@ import CheckoutProgressIndicator from '@/components/checkout/CheckoutProgressInd
 import OrderSummary from '@/components/checkout/OrderSummary';
 import CheckoutForm from '@/components/checkout/CheckoutForm';
 import TrustElements from '@/components/checkout/TrustElements';
+import CheckoutSkeleton from '@/components/checkout/CheckoutSkeleton';
+import OrderSummarySkeleton from '@/components/checkout/OrderSummarySkeleton';
 
 const Checkout = () => {
   const { timeLeft, hasExpired, isLoading, pricing } = usePersonalizedTimer();
-
-  // Show loading state while timer initializes
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center" style={{ background: 'linear-gradient(to bottom, #f8f3f0, #ffffff)' }}>
-        <div className="text-center">
-          <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #f8f3f0, #ffffff)' }}>
@@ -33,16 +23,24 @@ const Checkout = () => {
           <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
             {/* Left Column - Order Summary (Mobile: shows second) */}
             <div className="order-2 lg:order-1">
-              <OrderSummary pricing={pricing} />
+              {isLoading ? (
+                <OrderSummarySkeleton />
+              ) : (
+                <OrderSummary pricing={pricing} />
+              )}
             </div>
 
             {/* Right Column - Checkout Form (Mobile: shows first) */}
             <div className="order-1 lg:order-2">
-              <CheckoutForm 
-                timeLeft={timeLeft}
-                hasExpired={hasExpired}
-                pricing={pricing}
-              />
+              {isLoading ? (
+                <CheckoutSkeleton />
+              ) : (
+                <CheckoutForm 
+                  timeLeft={timeLeft}
+                  hasExpired={hasExpired}
+                  pricing={pricing}
+                />
+              )}
             </div>
           </div>
         </div>
