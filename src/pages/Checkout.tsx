@@ -102,49 +102,49 @@ const Checkout = () => {
     <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #f8f3f0, #ffffff)' }}>
       <CheckoutHeader />
 
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-4 sm:py-8">
         <div className="max-w-6xl mx-auto">
           <CheckoutProgressIndicator />
 
-          <div className="grid lg:grid-cols-2 gap-8">
-            {/* Left Column - Order Summary */}
+          <div className="grid lg:grid-cols-2 gap-6 lg:gap-8">
+            {/* Left Column - Order Summary (Mobile: shows second) */}
             <div className="order-2 lg:order-1">
               <OrderSummary pricing={pricing} />
             </div>
 
-            {/* Right Column - Checkout Form */}
+            {/* Right Column - Checkout Form (Mobile: shows first) */}
             <div className="order-1 lg:order-2">
               <Card>
-                <CardContent className="p-8">
+                <CardContent className="p-4 sm:p-6 lg:p-8">
                   {/* Urgency Banner */}
                   {!hasExpired && (
-                    <div className="mb-6 p-4 rounded-lg text-center" style={{ backgroundColor: '#ffe6e6', border: '1px solid #ff8a58' }}>
+                    <div className="mb-4 sm:mb-6 p-3 sm:p-4 rounded-lg text-center" style={{ backgroundColor: '#ffe6e6', border: '1px solid #ff8a58' }}>
                       <div className="flex items-center justify-center mb-2">
-                        <Clock className="w-5 h-5 mr-2" style={{ color: '#d32f2f' }} />
-                        <span className="font-semibold" style={{ color: '#d32f2f' }}>Limited Time Offer</span>
+                        <Clock className="w-4 h-4 sm:w-5 sm:h-5 mr-2" style={{ color: '#d32f2f' }} />
+                        <span className="font-semibold text-sm sm:text-base" style={{ color: '#d32f2f' }}>Limited Time Offer</span>
                       </div>
-                      <p className="text-sm" style={{ color: '#d32f2f' }}>
+                      <p className="text-xs sm:text-sm" style={{ color: '#d32f2f' }}>
                         Special pricing expires in {timeLeft.days}d {timeLeft.hours}h {timeLeft.minutes}m - Save ${pricing.savings} today!
                       </p>
                     </div>
                   )}
 
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6">Complete Your Order</h2>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">Complete Your Order</h2>
 
                   <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
                       {/* Contact Information */}
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
-                        <div className="grid md:grid-cols-2 gap-4">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Contact Information</h3>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                           <FormField
                             control={form.control}
                             name="firstName"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>First Name *</FormLabel>
+                                <FormLabel className="text-sm font-medium">First Name *</FormLabel>
                                 <FormControl>
-                                  <Input {...field} className="w-full" />
+                                  <Input {...field} className="w-full h-11 sm:h-10 text-base sm:text-sm" />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
@@ -155,27 +155,27 @@ const Checkout = () => {
                             name="lastName"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Last Name *</FormLabel>
+                                <FormLabel className="text-sm font-medium">Last Name *</FormLabel>
                                 <FormControl>
-                                  <Input {...field} className="w-full" />
+                                  <Input {...field} className="w-full h-11 sm:h-10 text-base sm:text-sm" />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
                         </div>
-                        <div className="mt-4">
+                        <div className="mt-3 sm:mt-4">
                           <FormField
                             control={form.control}
                             name="email"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Email Address *</FormLabel>
+                                <FormLabel className="text-sm font-medium">Email Address *</FormLabel>
                                 <FormControl>
                                   <Input 
                                     type="email" 
                                     placeholder="your@email.com"
-                                    className="w-full"
+                                    className="w-full h-11 sm:h-10 text-base sm:text-sm"
                                     {...field} 
                                   />
                                 </FormControl>
@@ -189,30 +189,30 @@ const Checkout = () => {
 
                       {/* Billing Address */}
                       <div>
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Billing Address</h3>
-                        <div className="space-y-4">
+                        <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-3 sm:mb-4">Billing Address</h3>
+                        <div className="space-y-3 sm:space-y-4">
                           <FormField
                             control={form.control}
                             name="billingAddress"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Address *</FormLabel>
+                                <FormLabel className="text-sm font-medium">Address *</FormLabel>
                                 <FormControl>
-                                  <Input {...field} className="w-full" />
+                                  <Input {...field} className="w-full h-11 sm:h-10 text-base sm:text-sm" />
                                 </FormControl>
                                 <FormMessage />
                               </FormItem>
                             )}
                           />
-                          <div className="grid md:grid-cols-2 gap-4">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                             <FormField
                               control={form.control}
                               name="city"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>City *</FormLabel>
+                                  <FormLabel className="text-sm font-medium">City *</FormLabel>
                                   <FormControl>
-                                    <Input {...field} className="w-full" />
+                                    <Input {...field} className="w-full h-11 sm:h-10 text-base sm:text-sm" />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -223,9 +223,9 @@ const Checkout = () => {
                               name="zipCode"
                               render={({ field }) => (
                                 <FormItem>
-                                  <FormLabel>ZIP Code *</FormLabel>
+                                  <FormLabel className="text-sm font-medium">ZIP Code *</FormLabel>
                                   <FormControl>
-                                    <Input {...field} className="w-full" />
+                                    <Input {...field} className="w-full h-11 sm:h-10 text-base sm:text-sm" />
                                   </FormControl>
                                   <FormMessage />
                                 </FormItem>
@@ -235,11 +235,11 @@ const Checkout = () => {
                         </div>
                       </div>
 
-                      {/* Submit Button */}
+                      {/* Submit Button - Mobile Optimized */}
                       <Button
                         type="submit"
                         size="lg"
-                        className="w-full text-white py-4 text-lg font-semibold hover:opacity-90 transition-opacity"
+                        className="w-full text-white py-4 sm:py-4 text-base sm:text-lg font-semibold hover:opacity-90 transition-opacity h-12 sm:h-auto touch-manipulation"
                         style={{ backgroundColor: '#8da3e8' }}
                         disabled={isProcessing || !form.formState.isValid}
                       >
@@ -247,14 +247,14 @@ const Checkout = () => {
                           <>Processing...</>
                         ) : (
                           <>
-                            <Lock className="w-5 h-5 mr-2" />
+                            <Lock className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
                             Complete Secure Order - ${pricing.current}
                           </>
                         )}
                       </Button>
 
                       <div className="text-center">
-                        <p className="text-xs text-gray-500">
+                        <p className="text-xs text-gray-500 leading-relaxed">
                           By completing this order, you agree to our terms of service and privacy policy.
                           Your payment is processed securely and your information is protected.
                         </p>
@@ -262,17 +262,17 @@ const Checkout = () => {
                     </form>
                   </Form>
 
-                  {/* Social Proof */}
-                  <div className="mt-8 pt-6 border-t text-center">
-                    <div className="flex items-center justify-center space-x-2 text-sm text-gray-600 mb-2">
-                      <Users className="w-4 h-4" />
+                  {/* Social Proof - Mobile Optimized */}
+                  <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t text-center">
+                    <div className="flex items-center justify-center space-x-2 text-xs sm:text-sm text-gray-600 mb-2">
+                      <Users className="w-3 h-3 sm:w-4 sm:h-4" />
                       <span>Join 50+ families who have used this guide</span>
                     </div>
                     <div className="flex items-center justify-center space-x-1">
                       {[...Array(5)].map((_, i) => (
-                        <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
+                        <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 text-yellow-500 fill-current" />
                       ))}
-                      <span className="text-sm text-gray-600 ml-2">4.9/5 average rating</span>
+                      <span className="text-xs sm:text-sm text-gray-600 ml-2">4.9/5 average rating</span>
                     </div>
                   </div>
                 </CardContent>
@@ -282,20 +282,20 @@ const Checkout = () => {
         </div>
       </div>
 
-      {/* Footer Trust Elements */}
-      <div className="border-t bg-gray-50 py-8">
+      {/* Footer Trust Elements - Mobile Optimized */}
+      <div className="border-t bg-gray-50 py-6 sm:py-8">
         <div className="container mx-auto px-4">
-          <div className="flex flex-wrap items-center justify-center space-x-8 text-sm text-gray-600">
+          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-8 text-xs sm:text-sm text-gray-600">
             <div className="flex items-center">
-              <Shield className="w-4 h-4 mr-2" />
+              <Shield className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
               <span>256-bit SSL Encryption</span>
             </div>
             <div className="flex items-center">
-              <Lock className="w-4 h-4 mr-2" />
+              <Lock className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
               <span>Secure Payment Processing</span>
             </div>
             <div className="flex items-center">
-              <Users className="w-4 h-4 mr-2" />
+              <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-2" />
               <span>Trusted by 50+ Families</span>
             </div>
           </div>
