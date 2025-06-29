@@ -79,7 +79,7 @@ const OrderSummary = ({ pricing }: OrderSummaryProps) => {
         <div className="border-t pt-4 space-y-2">
           <div className="flex justify-between text-gray-700">
             <span>Subtotal:</span>
-            <span>${pricing.current}.00</span>
+            <span>${pricing.regular}.00</span>
           </div>
           {pricing.savings > 0 && (
             <div className="flex justify-between text-gray-700">
