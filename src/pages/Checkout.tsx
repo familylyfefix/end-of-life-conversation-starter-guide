@@ -235,17 +235,6 @@ const Checkout = () => {
                         </div>
                       </div>
 
-                      {/* Guarantee */}
-                      <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                        <div className="flex items-center">
-                          <Shield className="w-6 h-6 text-green-600 mr-3" />
-                          <div>
-                            <h4 className="font-semibold text-green-800">30-Day Money-Back Guarantee</h4>
-                            <p className="text-sm text-green-700">Not satisfied? Get a full refund within 30 days, no questions asked.</p>
-                          </div>
-                        </div>
-                      </div>
-
                       {/* Submit Button */}
                       <Button
                         type="submit"
@@ -277,7 +266,7 @@ const Checkout = () => {
                   <div className="mt-8 pt-6 border-t text-center">
                     <div className="flex items-center justify-center space-x-2 text-sm text-gray-600 mb-2">
                       <Users className="w-4 h-4" />
-                      <span>Join 500+ families who have used this guide</span>
+                      <span>Join 50+ families who have used this guide</span>
                     </div>
                     <div className="flex items-center justify-center space-x-1">
                       {[...Array(5)].map((_, i) => (
@@ -302,16 +291,12 @@ const Checkout = () => {
               <span>256-bit SSL Encryption</span>
             </div>
             <div className="flex items-center">
-              <CheckCircle className="w-4 h-4 mr-2" />
-              <span>30-Day Guarantee</span>
-            </div>
-            <div className="flex items-center">
               <Lock className="w-4 h-4 mr-2" />
               <span>Secure Payment Processing</span>
             </div>
             <div className="flex items-center">
               <Users className="w-4 h-4 mr-2" />
-              <span>Trusted by 500+ Families</span>
+              <span>Trusted by 50+ Families</span>
             </div>
           </div>
         </div>
