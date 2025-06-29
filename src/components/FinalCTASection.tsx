@@ -2,8 +2,12 @@
 import React from 'react';
 import { Download, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useLocation } from 'react-router-dom';
 
 const FinalCTASection = () => {
+  const location = useLocation();
+  const isOnPlaybookPage = location.pathname === '/playbook' || location.pathname === '/end-of-life-playbook';
+
   return (
     <div className="py-20" style={{ backgroundColor: '#8da3e8' }}>
       <div className="container mx-auto px-4 text-center">
@@ -26,19 +30,21 @@ const FinalCTASection = () => {
             <ArrowRight className="w-5 h-5 ml-2" />
           </Button>
           
-          <div className="mt-6 pt-6 border-t border-blue-500">
-            <p className="text-blue-200 text-sm mb-4">
-              Want the complete system?
-            </p>
-            <Button 
-              variant="outline"
-              className="border-white text-white hover:bg-white hover:text-blue-600"
-              onClick={() => window.open('/playbook', '_blank')}
-            >
-              View Complete Playbook Template
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </Button>
-          </div>
+          {!isOnPlaybookPage && (
+            <div className="mt-6 pt-6 border-t border-blue-500">
+              <p className="text-blue-200 text-sm mb-4">
+                Want the complete system?
+              </p>
+              <Button 
+                variant="outline"
+                className="border-white text-white hover:bg-white hover:text-blue-600"
+                onClick={() => window.location.href = '/playbook'}
+              >
+                View Complete Playbook Template
+                <ArrowRight className="w-4 h-4 ml-2" />
+              </Button>
+            </div>
+          )}
           
           <p className="text-blue-200 text-sm mt-6">
             Start meaningful conversations with your family today
