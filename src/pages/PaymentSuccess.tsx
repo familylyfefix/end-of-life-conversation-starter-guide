@@ -148,7 +148,7 @@ const PaymentSuccess = () => {
               <span className="text-sm text-gray-600 ml-2">4.9/5 average rating</span>
             </div>
             <p className="text-sm text-gray-500">
-              Join 500+ families who have successfully used this guide
+              Join 50+ families who have successfully used this guide
             </p>
           </div>
         </div>
