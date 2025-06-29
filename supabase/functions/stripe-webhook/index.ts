@@ -12,6 +12,42 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
 );
 
+const triggerZapierWebhook = async (purchaseData: any) => {
+  const zapierWebhookUrl = Deno.env.get("ZAPIER_WEBHOOK_URL");
+  
+  if (!zapierWebhookUrl) {
+    console.log("No Zapier webhook URL configured, skipping notification");
+    return;
+  }
+
+  try {
+    const response = await fetch(zapierWebhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        event_type: "purchase_completed",
+        customer_email: purchaseData.customer_email,
+        customer_name: purchaseData.customer_name,
+        product_name: purchaseData.product_name,
+        amount: purchaseData.amount,
+        currency: purchaseData.currency,
+        purchase_date: new Date().toISOString(),
+        stripe_session_id: purchaseData.stripe_session_id,
+      }),
+    });
+
+    if (response.ok) {
+      console.log("Zapier webhook triggered successfully");
+    } else {
+      console.error("Failed to trigger Zapier webhook:", response.status);
+    }
+  } catch (error) {
+    console.error("Error triggering Zapier webhook:", error);
+  }
+};
+
 serve(async (req) => {
   const signature = req.headers.get("stripe-signature");
   
@@ -34,17 +70,19 @@ serve(async (req) => {
       
       console.log("Processing completed checkout session:", session.id);
 
+      const purchaseData = {
+        stripe_session_id: session.id,
+        customer_email: session.customer_email!,
+        customer_name: session.metadata?.customer_name || null,
+        product_name: "End-of-Life Conversation Playbook",
+        amount: session.amount_total!,
+        currency: session.currency!,
+      };
+
       // Record the purchase in our database
       const { error } = await supabase
         .from("purchases")
-        .insert({
-          stripe_session_id: session.id,
-          customer_email: session.customer_email!,
-          customer_name: session.metadata?.customer_name || null,
-          product_name: "End-of-Life Conversation Playbook",
-          amount: session.amount_total!,
-          currency: session.currency!,
-        });
+        .insert(purchaseData);
 
       if (error) {
         console.error("Error recording purchase:", error);
@@ -52,6 +90,9 @@ serve(async (req) => {
       }
 
       console.log("Purchase recorded successfully for:", session.customer_email);
+
+      // Trigger Zapier webhook for welcome email
+      await triggerZapierWebhook(purchaseData);
     }
 
     return new Response(JSON.stringify({ received: true }), {
