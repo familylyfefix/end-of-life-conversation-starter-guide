@@ -1,21 +1,85 @@
 
-import React from 'react';
-import { CheckCircle, Download, Mail, ArrowLeft, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { CheckCircle, Download, Mail, ArrowLeft, Star, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 const PaymentSuccess = () => {
-  const handleDownload = () => {
-    // Option 1: Direct download of a hosted PDF file
-    const link = document.createElement('a');
-    link.href = '/lovable-uploads/end-of-life-conversation-playbook.pdf'; // You'll need to upload this file
-    link.download = 'End-of-Life-Conversation-Playbook.pdf';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const [isDownloading, setIsDownloading] = useState(false);
+  const [downloadsRemaining, setDownloadsRemaining] = useState<number | null>(null);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    // Get session ID from URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('session_id');
+    setSessionId(id);
+  }, []);
+
+  const handleSecureDownload = async () => {
+    if (!sessionId) {
+      toast({
+        title: "Error",
+        description: "No session ID found. Please contact support.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsDownloading(true);
     
-    // Optional: Track the download event
-    console.log('Playbook downloaded');
+    try {
+      const { data, error } = await supabase.functions.invoke('generate-download-link', {
+        body: { session_id: sessionId }
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.download_url) {
+        // Create a temporary link and trigger download
+        const link = document.createElement('a');
+        link.href = data.download_url;
+        link.download = 'End-of-Life-Conversation-Playbook.pdf';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setDownloadsRemaining(data.downloads_remaining);
+        
+        toast({
+          title: "Download Started",
+          description: `Download started successfully. ${data.downloads_remaining} downloads remaining.`,
+        });
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      
+      let errorMessage = 'Failed to generate download link. Please try again.';
+      
+      if (error instanceof Error) {
+        const message = error.message.toLowerCase();
+        if (message.includes('expired')) {
+          errorMessage = 'Your download link has expired. Please contact support for assistance.';
+        } else if (message.includes('limit exceeded')) {
+          errorMessage = 'You have reached the maximum number of downloads for this purchase.';
+        } else if (message.includes('not found')) {
+          errorMessage = 'Purchase not found. Please contact support with your order details.';
+        }
+      }
+      
+      toast({
+        title: "Download Error",
+        description: errorMessage,
+        variant: "destructive",
+      });
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   return (
@@ -55,7 +119,7 @@ const PaymentSuccess = () => {
             Payment Successful!
           </h1>
           <p className="text-xl text-gray-600 mb-8">
-            Thank you for your purchase. Your End-of-Life Conversation Playbook is ready for download.
+            Thank you for your purchase. Your End-of-Life Conversation Playbook is ready for secure download.
           </p>
 
           {/* Order Summary Card */}
@@ -63,7 +127,7 @@ const PaymentSuccess = () => {
             <CardContent className="p-6">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-lg font-semibold text-gray-900">Order Summary</h3>
-                <span className="text-sm text-gray-500">Order #12345</span>
+                <span className="text-sm text-gray-500">Session: {sessionId?.substring(0, 8)}...</span>
               </div>
               
               <div className="flex items-start space-x-4 p-4 rounded-lg" style={{ backgroundColor: '#f8f3f0' }}>
@@ -83,31 +147,47 @@ const PaymentSuccess = () => {
             </CardContent>
           </Card>
 
-          {/* Download Section */}
+          {/* Secure Download Section */}
           <Card className="mb-8">
             <CardContent className="p-6">
               <div className="flex items-center justify-center mb-4">
                 <Download className="w-8 h-8 mr-3" style={{ color: '#8da3e8' }} />
-                <h3 className="text-xl font-semibold text-gray-900">Download Your Guide</h3>
+                <h3 className="text-xl font-semibold text-gray-900">Secure Download</h3>
               </div>
               
-              <p className="text-gray-600 mb-6">
-                Your complete End-of-Life Conversation Playbook is ready for immediate download.
+              <p className="text-gray-600 mb-4">
+                Your complete End-of-Life Conversation Playbook is ready for secure download.
               </p>
+
+              {downloadsRemaining !== null && (
+                <div className="flex items-center justify-center mb-4 p-3 bg-blue-50 rounded-lg">
+                  <AlertCircle className="w-4 h-4 mr-2 text-blue-600" />
+                  <span className="text-sm text-blue-700">
+                    {downloadsRemaining} downloads remaining (expires in 30 days)
+                  </span>
+                </div>
+              )}
               
               <Button 
                 size="lg"
                 className="w-full text-white py-3 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
                 style={{ backgroundColor: '#8da3e8' }}
-                onClick={handleDownload}
+                onClick={handleSecureDownload}
+                disabled={isDownloading}
               >
-                <Download className="w-5 h-5 mr-2" />
-                Download Your Playbook Now
+                {isDownloading ? (
+                  <>Generating Secure Link...</>
+                ) : (
+                  <>
+                    <Download className="w-5 h-5 mr-2" />
+                    Download Your Secure Playbook
+                  </>
+                )}
               </Button>
               
               <div className="flex items-center justify-center text-sm text-gray-500">
                 <Mail className="w-4 h-4 mr-2" />
-                <span>A download link has also been sent to your email</span>
+                <span>Secure download link - your purchase is verified</span>
               </div>
             </CardContent>
           </Card>
