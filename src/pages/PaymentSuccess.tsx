@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, Download, Mail, ArrowLeft, Star, AlertCircle } from 'lucide-react';
+import { CheckCircle, Download, Mail, ArrowLeft, Star, AlertCircle, Bug } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -13,6 +13,7 @@ const PaymentSuccess = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
+  const [isCreatingTestPurchase, setIsCreatingTestPurchase] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -21,6 +22,45 @@ const PaymentSuccess = () => {
     const id = urlParams.get('session_id');
     setSessionId(id);
   }, []);
+
+  const handleCreateTestPurchase = async () => {
+    if (!sessionId) {
+      toast({
+        title: "Error",
+        description: "No session ID found",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setIsCreatingTestPurchase(true);
+    
+    try {
+      const { data, error } = await supabase.functions.invoke('create-test-purchase', {
+        body: { session_id: sessionId }
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data?.success) {
+        toast({
+          title: "Test Purchase Created",
+          description: "A test purchase record has been created. Try downloading now.",
+        });
+      }
+    } catch (error) {
+      console.error('Test purchase creation error:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create test purchase record",
+        variant: "destructive"
+      });
+    } finally {
+      setIsCreatingTestPurchase(false);
+    }
+  };
 
   const handleSecureDownload = async () => {
     if (!sessionId) {
@@ -141,6 +181,29 @@ const PaymentSuccess = () => {
                   <div className="font-bold text-lg" style={{ color: '#ff8a58' }}>$47.00</div>
                 </div>
               </div>
+            </CardContent>
+          </Card>
+
+          {/* Debug Section */}
+          <Card className="mb-8 border border-orange-200 bg-orange-50">
+            <CardContent className="p-6">
+              <div className="flex items-center justify-center mb-4">
+                <Bug className="w-6 h-6 mr-2 text-orange-600" />
+                <h3 className="text-lg font-semibold text-orange-800">Debug Mode</h3>
+              </div>
+              
+              <p className="text-sm text-orange-700 mb-4">
+                If download fails, try creating a test purchase record first:
+              </p>
+              
+              <Button 
+                variant="outline"
+                className="border-orange-300 text-orange-700 hover:bg-orange-100"
+                onClick={handleCreateTestPurchase}
+                disabled={isCreatingTestPurchase || !sessionId}
+              >
+                {isCreatingTestPurchase ? "Creating..." : "Create Test Purchase"}
+              </Button>
             </CardContent>
           </Card>
 

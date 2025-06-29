@@ -18,26 +18,37 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Create the private-downloads bucket
-    const { data, error } = await supabase.storage.createBucket('private-downloads', {
-      public: false,
-      allowedMimeTypes: ['application/pdf'],
-      fileSizeLimit: 50 * 1024 * 1024 // 50MB limit
-    });
+    console.log("Creating storage bucket for private downloads...");
 
-    if (error && !error.message.includes('already exists')) {
-      throw error;
+    // Create the private-downloads bucket
+    const { data: bucketData, error: bucketError } = await supabase.storage
+      .createBucket("private-downloads", {
+        public: false,
+        allowedMimeTypes: ["application/pdf"],
+        fileSizeLimit: 50 * 1024 * 1024, // 50MB limit
+      });
+
+    if (bucketError && !bucketError.message.includes("already exists")) {
+      console.error("Error creating bucket:", bucketError);
+      throw bucketError;
     }
 
     console.log("Storage bucket created or already exists");
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({ 
+      success: true,
+      message: "Storage bucket created successfully",
+      bucket: bucketData
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
     console.error("Storage bucket creation error:", error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: "Failed to create storage bucket",
+      details: error.message
+    }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 500,
     });

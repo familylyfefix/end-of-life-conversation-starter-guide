@@ -51,47 +51,63 @@ const triggerZapierWebhook = async (purchaseData: any) => {
 serve(async (req) => {
   const signature = req.headers.get("stripe-signature");
   
+  console.log("=== WEBHOOK RECEIVED ===");
+  console.log("Has signature:", !!signature);
+  console.log("Method:", req.method);
+  
   if (!signature) {
+    console.error("No Stripe signature found");
     return new Response("No signature", { status: 400 });
   }
 
   try {
     const body = await req.text();
+    console.log("Body length:", body.length);
+    
     const event = stripe.webhooks.constructEvent(
       body,
       signature,
       Deno.env.get("STRIPE_WEBHOOK_SECRET") || ""
     );
 
-    console.log("Webhook event received:", event.type);
+    console.log("=== EVENT DETAILS ===");
+    console.log("Event type:", event.type);
+    console.log("Event ID:", event.id);
 
     if (event.type === "checkout.session.completed") {
       const session = event.data.object as Stripe.Checkout.Session;
       
-      console.log("Processing completed checkout session:", session.id);
-      console.log("Session details:", {
-        id: session.id,
-        customer_email: session.customer_email,
-        amount_total: session.amount_total,
-        currency: session.currency,
-        payment_status: session.payment_status
-      });
+      console.log("=== CHECKOUT SESSION COMPLETED ===");
+      console.log("Session ID:", session.id);
+      console.log("Customer email:", session.customer_email);
+      console.log("Amount total:", session.amount_total);
+      console.log("Currency:", session.currency);
+      console.log("Payment status:", session.payment_status);
+      console.log("Full session object keys:", Object.keys(session));
 
-      // Check if purchase already exists to avoid duplicates
-      const { data: existingPurchase } = await supabase
+      // Check if purchase already exists
+      console.log("Checking for existing purchase...");
+      const { data: existingPurchase, error: checkError } = await supabase
         .from("purchases")
-        .select("id")
+        .select("id, stripe_session_id")
         .eq("stripe_session_id", session.id)
-        .single();
+        .maybeSingle();
+
+      console.log("Existing purchase check result:", { existingPurchase, checkError });
 
       if (existingPurchase) {
         console.log("Purchase already exists for session:", session.id);
-        return new Response(JSON.stringify({ received: true, message: "Purchase already exists" }), {
+        return new Response(JSON.stringify({ 
+          received: true, 
+          message: "Purchase already exists",
+          existing_purchase_id: existingPurchase.id
+        }), {
           headers: { "Content-Type": "application/json" },
           status: 200,
         });
       }
 
+      // Create purchase data
       const purchaseData = {
         stripe_session_id: session.id,
         customer_email: session.customer_email!,
@@ -101,32 +117,51 @@ serve(async (req) => {
         currency: session.currency!,
       };
 
-      console.log("Inserting purchase data:", purchaseData);
+      console.log("=== INSERTING PURCHASE ===");
+      console.log("Purchase data:", JSON.stringify(purchaseData, null, 2));
 
-      // Record the purchase in our database
-      const { data: insertedPurchase, error } = await supabase
+      // Insert purchase record
+      const { data: insertedPurchase, error: insertError } = await supabase
         .from("purchases")
         .insert(purchaseData)
         .select()
         .single();
 
-      if (error) {
-        console.error("Error recording purchase:", error);
-        throw error;
+      console.log("Insert result:", { insertedPurchase, insertError });
+
+      if (insertError) {
+        console.error("=== PURCHASE INSERT ERROR ===");
+        console.error("Error details:", JSON.stringify(insertError, null, 2));
+        throw insertError;
       }
 
-      console.log("Purchase recorded successfully:", insertedPurchase);
+      console.log("=== PURCHASE CREATED SUCCESSFULLY ===");
+      console.log("Created purchase ID:", insertedPurchase.id);
+      console.log("Created purchase session ID:", insertedPurchase.stripe_session_id);
 
-      // Trigger Zapier webhook for welcome email
+      // Verify the purchase was actually created
+      const { data: verifyPurchase, error: verifyError } = await supabase
+        .from("purchases")
+        .select("*")
+        .eq("stripe_session_id", session.id)
+        .single();
+
+      console.log("=== VERIFICATION ===");
+      console.log("Verification result:", { verifyPurchase, verifyError });
+
+      // Trigger Zapier webhook
       await triggerZapierWebhook(purchaseData);
     }
 
+    console.log("=== WEBHOOK PROCESSING COMPLETE ===");
     return new Response(JSON.stringify({ received: true }), {
       headers: { "Content-Type": "application/json" },
       status: 200,
     });
   } catch (error) {
-    console.error("Webhook error:", error);
+    console.error("=== WEBHOOK ERROR ===");
+    console.error("Error message:", error.message);
+    console.error("Error stack:", error.stack);
     return new Response(`Webhook error: ${error.message}`, {
       status: 400,
     });
