@@ -58,10 +58,10 @@ serve(async (req) => {
       });
     }
 
-    // Generate signed URL for the PDF (valid for 1 hour)
+    // Generate signed URL for the PDF (valid for 1 hour) - updated filename
     const { data: signedUrl, error: urlError } = await supabase.storage
       .from("private-downloads")
-      .createSignedUrl("end-of-life-conversation-playbook.pdf", 3600);
+      .createSignedUrl("end-of-life-conversation-playbook-instructions.pdf", 3600);
 
     if (urlError) {
       console.error("Error generating signed URL:", urlError);
