@@ -5,6 +5,19 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 const PaymentSuccess = () => {
+  const handleDownload = () => {
+    // Option 1: Direct download of a hosted PDF file
+    const link = document.createElement('a');
+    link.href = '/lovable-uploads/end-of-life-conversation-playbook.pdf'; // You'll need to upload this file
+    link.download = 'End-of-Life-Conversation-Playbook.pdf';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Optional: Track the download event
+    console.log('Playbook downloaded');
+  };
+
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #f8f3f0, #ffffff)' }}>
       {/* Header */}
@@ -86,10 +99,7 @@ const PaymentSuccess = () => {
                 size="lg"
                 className="w-full text-white py-3 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
                 style={{ backgroundColor: '#8da3e8' }}
-                onClick={() => {
-                  // In a real implementation, this would trigger the actual download
-                  alert('Download would start here. This is test mode.');
-                }}
+                onClick={handleDownload}
               >
                 <Download className="w-5 h-5 mr-2" />
                 Download Your Playbook Now
