@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
@@ -47,101 +46,26 @@ export const usePaymentSuccess = () => {
   };
 
   const handleSecureDownload = async () => {
-    console.log('=== STARTING PDF DOWNLOAD ===');
+    console.log('=== STARTING PDF DOWNLOAD FROM SUPABASE ===');
     setIsDownloading(true);
     
     try {
-      // Create a comprehensive PDF content
-      const pdfContent = `%PDF-1.4
-1 0 obj
-<<
-/Type /Catalog
-/Pages 2 0 R
->>
-endobj
+      // Download the actual PDF from Supabase storage
+      const { data, error } = await supabase.storage
+        .from('private-downloads')
+        .download('End-of-Life-Conversation-Playbook.pdf');
 
-2 0 obj
-<<
-/Type /Pages
-/Kids [3 0 R]
-/Count 1
->>
-endobj
+      if (error) {
+        console.error('Supabase storage error:', error);
+        throw new Error('Failed to download PDF from storage');
+      }
 
-3 0 obj
-<<
-/Type /Page
-/Parent 2 0 R
-/MediaBox [0 0 612 792]
-/Contents 4 0 R
-/Resources <<
-/Font <<
-/F1 5 0 R
->>
->>
->>
-endobj
+      if (!data) {
+        throw new Error('No PDF data received from storage');
+      }
 
-4 0 obj
-<<
-/Length 600
->>
-stream
-BT
-/F1 20 Tf
-50 750 Td
-(End-of-Life Conversation Playbook) Tj
-0 -40 Td
-/F1 14 Tf
-(Your Complete Guide to Having These Important Conversations) Tj
-0 -60 Td
-(Thank you for your purchase!) Tj
-0 -40 Td
-(This comprehensive guide includes:) Tj
-0 -30 Td
-(• Gentle conversation starters) Tj
-0 -20 Td
-(• Family-specific scripts) Tj
-0 -20 Td
-(• Timing strategies) Tj
-0 -20 Td
-(• Follow-up frameworks) Tj
-0 -40 Td
-(Visit familylyfefix.com for more resources) Tj
-0 -60 Td
-(Customer Support: support@familylyfefix.com) Tj
-ET
-endstream
-endobj
-
-5 0 obj
-<<
-/Type /Font
-/Subtype /Type1
-/BaseFont /Helvetica
->>
-endobj
-
-xref
-0 6
-0000000000 65535 f 
-0000000009 00000 n 
-0000000058 00000 n 
-0000000115 00000 n 
-0000000274 00000 n 
-0000000924 00000 n 
-trailer
-<<
-/Size 6
-/Root 1 0 R
->>
-startxref
-1021
-%%EOF`;
-
-      // Convert to blob and trigger download
-      const blob = new Blob([pdfContent], { type: 'application/pdf' });
-      const url = URL.createObjectURL(blob);
+      // Create download link from the blob
+      const url = URL.createObjectURL(data);
       
       const link = document.createElement('a');
       link.href = url;
@@ -184,7 +108,7 @@ startxref
       
       toast({
         title: "Download Error",
-        description: "There was an issue starting the download. Please try again.",
+        description: "There was an issue downloading your PDF. Please try again.",
         variant: "destructive"
       });
     } finally {
