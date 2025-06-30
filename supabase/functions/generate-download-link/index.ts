@@ -13,13 +13,14 @@ serve(async (req) => {
   }
 
   try {
+    console.log("=== GENERATE DOWNLOAD LINK FUNCTION STARTED ===");
+    
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
     const { session_id } = await req.json();
-
     console.log("Download request for session ID:", session_id);
 
     if (!session_id) {
