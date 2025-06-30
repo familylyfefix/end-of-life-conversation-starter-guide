@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 export const usePaymentSuccess = () => {
   const [isDownloading, setIsDownloading] = useState(false);
@@ -10,6 +11,7 @@ export const usePaymentSuccess = () => {
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [isCreatingTestPurchase, setIsCreatingTestPurchase] = useState(false);
   const [verificationError, setVerificationError] = useState<string | null>(null);
+  const [customerInfo, setCustomerInfo] = useState<{email: string, name: string} | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -21,6 +23,12 @@ export const usePaymentSuccess = () => {
     if (id) {
       console.log('Payment assumed successful');
       setPaymentVerified(true);
+      // Extract customer info from URL if available
+      const email = urlParams.get('customer_email') || '';
+      const name = urlParams.get('customer_name') || '';
+      if (email) {
+        setCustomerInfo({ email, name });
+      }
     }
   }, []);
 
@@ -134,6 +142,24 @@ startxref
         title: "Download Started",
         description: "Your PDF download has started successfully!",
       });
+
+      // Add customer to Kit after successful download
+      if (customerInfo?.email) {
+        try {
+          const [firstName, lastName] = customerInfo.name.split(' ');
+          await supabase.functions.invoke('add-to-kit', {
+            body: {
+              email: customerInfo.email,
+              firstName: firstName || '',
+              lastName: lastName || ''
+            }
+          });
+          console.log('Customer added to Kit successfully');
+        } catch (kitError) {
+          console.error('Kit integration failed:', kitError);
+          // Don't show error to user - download already worked
+        }
+      }
 
     } catch (error) {
       console.error('Download error:', error);
