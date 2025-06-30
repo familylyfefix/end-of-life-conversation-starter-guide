@@ -19,7 +19,7 @@ const ProblemSolutionSection = () => {
               <ul className="space-y-4 text-gray-700">
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-                  You know you need to discuss end-of-life wishes, but you don't know how to start
+                  You know you need to discuss end-of-lyfe wishes, but you don't know how to start
                 </li>
                 <li className="flex items-start">
                   <div className="w-2 h-2 bg-red-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
@@ -40,7 +40,7 @@ const ProblemSolutionSection = () => {
               <h3 className="text-2xl font-bold mb-6" style={{ color: '#ff8a58' }}>The Solution:</h3>
               <div className="bg-white p-6 rounded-xl shadow-lg border-2" style={{ borderColor: '#8da3e8' }}>
                 <p className="text-gray-700 mb-4">
-                  Our <strong>End-of-Life Conversation Starter Guide</strong> gives you:
+                  Our <strong>End-of-Lyfe Conversation Starter Guide</strong> gives you:
                 </p>
                 <ul className="space-y-3 text-gray-700">
                   <li className="flex items-start">

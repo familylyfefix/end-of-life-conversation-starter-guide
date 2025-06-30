@@ -70,7 +70,7 @@ const PaymentSuccess = () => {
           />
 
           <p className="text-xl text-gray-600 mb-8">
-            Thank you for your purchase. Your End-of-Life Conversation Playbook is ready for secure download.
+            Thank you for your purchase. Your End-of-Lyfe Conversation Playbook is ready for secure download.
           </p>
 
           <OrderSummaryCard sessionId={sessionId} />

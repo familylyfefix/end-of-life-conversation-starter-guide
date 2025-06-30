@@ -41,7 +41,7 @@ export const usePersonalizedTimer = () => {
   // Initialize or get existing timer data
   const initializeTimer = (): TimerData => {
     try {
-      const existingData = localStorage.getItem('familyLifeTimer');
+      const existingData = localStorage.getItem('familyLyfeTimer');
       
       if (existingData) {
         const timerData: TimerData = JSON.parse(existingData);
@@ -51,7 +51,7 @@ export const usePersonalizedTimer = () => {
         // Check if timer has expired
         if (now >= expiry) {
           const updatedData = { ...timerData, hasExpired: true };
-          localStorage.setItem('familyLifeTimer', JSON.stringify(updatedData));
+          localStorage.setItem('familyLyfeTimer', JSON.stringify(updatedData));
           return updatedData;
         }
         
@@ -69,7 +69,7 @@ export const usePersonalizedTimer = () => {
         hasExpired: false
       };
       
-      localStorage.setItem('familyLifeTimer', JSON.stringify(newTimerData));
+      localStorage.setItem('familyLyfeTimer', JSON.stringify(newTimerData));
       return newTimerData;
       
     } catch (error) {
@@ -124,14 +124,14 @@ export const usePersonalizedTimer = () => {
 
     const interval = setInterval(() => {
       try {
-        const timerData = JSON.parse(localStorage.getItem('familyLifeTimer') || '{}');
+        const timerData = JSON.parse(localStorage.getItem('familyLyfeTimer') || '{}');
         const remaining = calculateTimeLeft(timerData.expiryDate);
         
         // Check if timer just expired
         if (remaining.days === 0 && remaining.hours === 0 && remaining.minutes === 0 && remaining.seconds === 0) {
           setHasExpired(true);
           const updatedData = { ...timerData, hasExpired: true };
-          localStorage.setItem('familyLifeTimer', JSON.stringify(updatedData));
+          localStorage.setItem('familyLyfeTimer', JSON.stringify(updatedData));
           clearInterval(interval);
         } else {
           setTimeLeft(remaining);

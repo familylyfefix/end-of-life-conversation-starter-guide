@@ -29,11 +29,11 @@ const PlaybookDownloadSection = () => {
               </div>
               
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Your Complete End-of-Life Conversation Playbook
+                Your Complete End-of-Lyfe Conversation Playbook
               </h3>
               
               <p className="text-gray-600 mb-6">
-                Everything you need to have meaningful, stress-free conversations with your family about end-of-life planning.
+                Everything you need to have meaningful, stress-free conversations with your family about end-of-lyfe planning.
               </p>
 
               <Button 

@@ -54,7 +54,7 @@ const ProblemSolutionSection = () => {
             </h3>
             <div className="bg-white p-8 rounded-xl shadow-lg border-2" style={{ borderColor: '#8da3e8' }}>
               <p className="text-gray-700 mb-6 font-semibold">
-                The End-of-Life Conversation Playbook gives you everything you need:
+                The End-of-Lyfe Conversation Playbook gives you everything you need:
               </p>
               <div className="space-y-4 text-gray-700">
                 <div className="flex items-start">
