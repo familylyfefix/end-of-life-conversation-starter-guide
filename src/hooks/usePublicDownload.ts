@@ -22,15 +22,24 @@ export const usePublicDownload = () => {
       const { data: setupData, error: setupError } = await supabase.functions.invoke('setup-storage');
       console.log('Setup response:', setupData, setupError);
 
-      if (!setupData?.pdf_file_exists) {
+      if (setupError) {
+        throw new Error(`Setup error: ${setupError.message}`);
+      }
+
+      if (!setupData?.success) {
+        throw new Error(setupData?.error || 'Failed to setup download');
+      }
+
+      if (!setupData?.pdf_file_exists || !setupData?.public_url) {
         throw new Error('PDF file not found in storage. Please contact support.');
       }
 
-      if (!setupData?.public_url) {
-        throw new Error('Public download URL not available. Please contact support.');
-      }
-
       console.log('✅ Public download URL ready:', setupData.public_url);
+      console.log('File details:', { 
+        name: setupData.file_name, 
+        size: setupData.file_size 
+      });
+      
       setDownloadUrl(setupData.public_url);
       
       toast({

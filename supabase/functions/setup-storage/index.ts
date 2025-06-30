@@ -20,22 +20,22 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Create the private-downloads bucket as PUBLIC
-    console.log("Creating public private-downloads bucket...");
-    const { data: bucket, error: bucketError } = await supabase.storage
-      .createBucket('private-downloads', {
-        public: true, // Make it public for direct access
+    // Make sure the private-downloads bucket is PUBLIC
+    console.log("Updating private-downloads bucket to be public...");
+    const { data: updateResult, error: updateError } = await supabase.storage
+      .updateBucket('private-downloads', {
+        public: true,
         allowedMimeTypes: ['application/pdf'],
         fileSizeLimit: 50 * 1024 * 1024 // 50MB
       });
 
-    if (bucketError && !bucketError.message.includes('already exists')) {
-      console.error('Error creating bucket:', bucketError);
+    if (updateError) {
+      console.log('Bucket update result:', updateError);
     } else {
-      console.log('✅ Public bucket created or already exists');
+      console.log('✅ Bucket is now public');
     }
 
-    // List all files in the bucket
+    // List all files in the bucket to find the PDF
     console.log("Listing files in private-downloads bucket...");
     const { data: files, error: listError } = await supabase.storage
       .from('private-downloads')
@@ -44,31 +44,52 @@ serve(async (req) => {
     console.log('Files found:', files);
     console.log('List error:', listError);
 
-    // Try to get the specific PDF file info
-    const targetFile = 'end-of-life-conversation-playbook.pdf';
-    const pdfExists = files?.some(file => file.name === targetFile);
+    if (!files || files.length === 0) {
+      return new Response(JSON.stringify({ 
+        success: false,
+        error: "No files found in bucket",
+        instructions: "Please upload the PDF file to the private-downloads bucket"
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
+
+    // Find the PDF file (look for any PDF file)
+    const pdfFile = files.find(file => 
+      file.name.toLowerCase().includes('playbook') || 
+      file.name.toLowerCase().includes('conversation') ||
+      file.name.toLowerCase().endsWith('.pdf')
+    );
+
+    if (!pdfFile) {
+      return new Response(JSON.stringify({ 
+        success: false,
+        error: "PDF file not found",
+        available_files: files.map(f => f.name),
+        instructions: "Please upload a PDF file with 'playbook' or 'conversation' in the name"
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
 
     // Get public URL for the PDF
-    let publicUrl = null;
-    if (pdfExists) {
-      const { data: urlData } = supabase.storage
-        .from('private-downloads')
-        .getPublicUrl(targetFile);
-      publicUrl = urlData.publicUrl;
-      console.log('Public URL:', publicUrl);
-    }
+    const { data: urlData } = supabase.storage
+      .from('private-downloads')
+      .getPublicUrl(pdfFile.name);
+    
+    const publicUrl = urlData.publicUrl;
+    console.log('Public URL:', publicUrl);
 
     return new Response(JSON.stringify({ 
       success: true,
-      bucket_status: bucketError ? 'error' : 'ok',
-      bucket_error: bucketError?.message,
-      files_in_bucket: files?.map(f => ({ name: f.name, size: f.metadata?.size })) || [],
-      pdf_file_exists: pdfExists,
+      pdf_file_exists: true,
       public_url: publicUrl,
       download_url: publicUrl,
-      instructions: pdfExists 
-        ? "✅ PDF file found - public download URL ready" 
-        : "❌ PDF file NOT FOUND - please upload 'end-of-life-conversation-playbook.pdf' to the private-downloads bucket"
+      file_name: pdfFile.name,
+      file_size: pdfFile.metadata?.size,
+      message: "✅ PDF file found and public download URL ready"
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
