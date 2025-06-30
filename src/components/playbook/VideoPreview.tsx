@@ -11,7 +11,7 @@ const VideoPreview = () => {
               <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                 <div style={{ position: 'relative', paddingBottom: '56.25%', height: 0 }}>
                   <iframe 
-                    src="https://www.loom.com/embed/344660889dc44f8b95bbc23b454eae42?sid=9d179b15-75e1-4b3d-8b01-04d48c173b14"
+                    src="https://www.loom.com/embed/6c08afc65caa4aeb8d3c4dbd2732ea49?sid=360b1d6a-0218-45e3-87fd-e946e8cbf7bc"
                     frameBorder="0"
                     allowFullScreen
                     style={{ 
