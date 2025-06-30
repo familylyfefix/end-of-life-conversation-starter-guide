@@ -35,46 +35,35 @@ serve(async (req) => {
     const { data: allPurchases, error: allPurchasesError } = await supabase
       .from("purchases")
       .select("stripe_session_id, customer_email, created_at")
-      .limit(5);
+      .limit(10);
 
-    console.log("Recent purchases in database:", allPurchases);
+    console.log("All purchases in database:", allPurchases);
+    console.log("Total purchases found:", allPurchases?.length || 0);
 
     // Verify the purchase exists and is valid
     const { data: purchase, error: purchaseError } = await supabase
       .from("purchases")
       .select("*")
       .eq("stripe_session_id", session_id)
-      .single();
+      .maybeSingle();
 
     console.log("Purchase lookup result:", { purchase, error: purchaseError });
 
     if (purchaseError) {
       console.error("Purchase lookup error:", purchaseError);
-      
-      if (purchaseError.code === "PGRST116") {
-        return new Response(JSON.stringify({ 
-          error: "Purchase not found. Please contact support with your order details.",
-          debug_info: {
-            session_id: session_id,
-            error_code: purchaseError.code,
-            recent_purchases: allPurchases?.map(p => p.stripe_session_id) || []
-          }
-        }), {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 404,
-        });
-      }
-      
-      throw purchaseError;
+      throw new Error(`Database error: ${purchaseError.message}`);
     }
 
     if (!purchase) {
       console.error("No purchase found for session:", session_id);
+      console.log("Available session IDs:", allPurchases?.map(p => p.stripe_session_id) || []);
+      
       return new Response(JSON.stringify({ 
         error: "Purchase not found. Please contact support with your order details.",
         debug_info: {
           session_id: session_id,
-          recent_purchases: allPurchases?.map(p => p.stripe_session_id) || []
+          available_sessions: allPurchases?.map(p => p.stripe_session_id) || [],
+          total_purchases: allPurchases?.length || 0
         }
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -109,7 +98,7 @@ serve(async (req) => {
 
     console.log("Generating signed URL for file: end-of-life-conversation-playbook-instructions.pdf");
 
-    // Generate signed URL for the PDF (valid for 1 hour) - updated filename
+    // Generate signed URL for the PDF (valid for 1 hour)
     const { data: signedUrl, error: urlError } = await supabase.storage
       .from("private-downloads")
       .createSignedUrl("end-of-life-conversation-playbook-instructions.pdf", 3600);
@@ -142,7 +131,7 @@ serve(async (req) => {
       // Don't fail the request, just log the error
     }
 
-    console.log("Generated secure download link for purchase:", purchase.id);
+    console.log("✅ Generated secure download link for purchase:", purchase.id);
 
     return new Response(JSON.stringify({ 
       download_url: signedUrl.signedUrl,
@@ -152,7 +141,7 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    console.error("Download link generation error:", error);
+    console.error("❌ Download link generation error:", error);
     return new Response(JSON.stringify({ 
       error: "Internal server error",
       debug_info: error.message

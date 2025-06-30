@@ -14,6 +14,8 @@ serve(async (req) => {
   }
 
   try {
+    console.log("=== VERIFY PAYMENT FUNCTION STARTED ===");
+    
     const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY") || "", {
       apiVersion: "2023-10-16",
     });
@@ -24,10 +26,10 @@ serve(async (req) => {
     );
 
     const { session_id } = await req.json();
-
     console.log("Verifying payment for session:", session_id);
 
     if (!session_id) {
+      console.error("No session ID provided");
       return new Response(JSON.stringify({ error: "Session ID required" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,
@@ -35,14 +37,17 @@ serve(async (req) => {
     }
 
     // Check if purchase already exists
-    const { data: existingPurchase } = await supabase
+    console.log("Checking if purchase already exists...");
+    const { data: existingPurchase, error: existingError } = await supabase
       .from("purchases")
       .select("id")
       .eq("stripe_session_id", session_id)
       .maybeSingle();
 
+    console.log("Existing purchase check:", { existingPurchase, existingError });
+
     if (existingPurchase) {
-      console.log("Purchase already exists");
+      console.log("Purchase already exists with ID:", existingPurchase.id);
       return new Response(JSON.stringify({ 
         success: true, 
         message: "Purchase already verified",
@@ -54,10 +59,9 @@ serve(async (req) => {
     }
 
     // Retrieve session from Stripe
+    console.log("Retrieving session from Stripe...");
     const session = await stripe.checkout.sessions.retrieve(session_id);
-
-    console.log("Stripe session status:", session.payment_status);
-    console.log("Session details:", {
+    console.log("Stripe session retrieved:", {
       id: session.id,
       payment_status: session.payment_status,
       customer_email: session.customer_email,
@@ -65,6 +69,7 @@ serve(async (req) => {
     });
 
     if (session.payment_status !== "paid") {
+      console.error("Payment not completed. Status:", session.payment_status);
       return new Response(JSON.stringify({ 
         error: "Payment not completed",
         payment_status: session.payment_status
@@ -74,17 +79,20 @@ serve(async (req) => {
       });
     }
 
-    // Create purchase record
+    // Create purchase record with all required fields
     const purchaseData = {
       stripe_session_id: session.id,
-      customer_email: session.customer_email!,
-      customer_name: session.metadata?.customer_name || null,
+      customer_email: session.customer_email || "unknown@example.com",
+      customer_name: session.metadata?.customer_name || "Unknown Customer",
       product_name: "End-of-Life Conversation Playbook",
-      amount: session.amount_total!,
-      currency: session.currency!,
+      amount: session.amount_total || 4700,
+      currency: session.currency || "usd",
+      max_downloads: 3,
+      download_count: 0,
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days from now
     };
 
-    console.log("Creating purchase record:", purchaseData);
+    console.log("Creating purchase record with data:", purchaseData);
 
     const { data: newPurchase, error: insertError } = await supabase
       .from("purchases")
@@ -94,10 +102,10 @@ serve(async (req) => {
 
     if (insertError) {
       console.error("Error creating purchase:", insertError);
-      throw insertError;
+      throw new Error(`Failed to create purchase record: ${insertError.message}`);
     }
 
-    console.log("Purchase record created successfully:", newPurchase.id);
+    console.log("✅ Purchase record created successfully:", newPurchase);
 
     return new Response(JSON.stringify({ 
       success: true, 
@@ -109,7 +117,7 @@ serve(async (req) => {
     });
 
   } catch (error) {
-    console.error("Payment verification error:", error);
+    console.error("❌ Payment verification error:", error);
     return new Response(JSON.stringify({ 
       error: "Payment verification failed",
       details: error.message
