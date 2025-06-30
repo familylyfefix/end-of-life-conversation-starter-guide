@@ -23,13 +23,13 @@ const OrderSummary = ({ pricing }: OrderSummaryProps) => {
 
   const testimonials = [
     {
-      name: "Sarah M.",
-      text: "This guide made the impossible conversation possible. My family is so grateful.",
+      name: "Brooklyn M.",
+      text: "This guide gave me the courage to finally talk to my parents about their wishes. The conversation starters were perfect - not too heavy, but thorough.",
       rating: 5
     },
     {
-      name: "Robert K.",
-      text: "Worth every penny. Saved us from potential family conflicts later.",
+      name: "James K.",
+      text: "I needed help discussing this with my adult children. The guide made it so much easier than I expected.",
       rating: 5
     }
   ];
