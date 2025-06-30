@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -51,7 +50,7 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
     try {
       console.log('Submitting form with data:', data);
       
-      // Call Stripe payment function
+      // Call Stripe payment function with better error handling
       const { data: paymentData, error } = await supabase.functions.invoke('create-payment', {
         body: {
           customerEmail: data.email,
@@ -60,6 +59,8 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
         }
       });
 
+      console.log('Payment response:', { paymentData, error });
+
       if (error) {
         console.error('Supabase function error:', error);
         throw new Error(error.message || 'Payment processing failed');
@@ -67,7 +68,7 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
 
       if (paymentData?.url) {
         console.log('Redirecting to Stripe checkout:', paymentData.url);
-        // Redirect to Stripe Checkout
+        // Use window.location.href for better compatibility
         window.location.href = paymentData.url;
       } else {
         throw new Error('No checkout URL received from payment processor');
@@ -77,23 +78,17 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
       
       let errorMessage = 'There was an issue processing your payment. Please try again.';
       
-      // Provide more specific error messages based on the error type
       if (error instanceof Error) {
         const message = error.message.toLowerCase();
         
-        if (message.includes('stripe') && message.includes('api key')) {
-          errorMessage = 'Payment system configuration error. Please contact support.';
+        if (message.includes('stripe')) {
+          errorMessage = 'Payment system error. Please try again or contact support.';
         } else if (message.includes('network') || message.includes('fetch')) {
           errorMessage = 'Network error. Please check your connection and try again.';
-        } else if (message.includes('invalid') || message.includes('validation')) {
+        } else if (message.includes('invalid')) {
           errorMessage = 'Please check your information and try again.';
-        } else if (message.includes('timeout')) {
-          errorMessage = 'Request timed out. Please try again.';
         } else if (error.message && error.message.length > 0) {
-          // Only show specific error messages if they seem user-friendly
-          if (!message.includes('function') && !message.includes('undefined')) {
-            errorMessage = error.message;
-          }
+          errorMessage = error.message;
         }
       }
       
@@ -123,7 +118,6 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
             <ContactInformationForm form={form} />
             <BillingAddressForm form={form} />
 
-            {/* Submit Button - Mobile Optimized */}
             <Button
               type="submit"
               size="lg"
