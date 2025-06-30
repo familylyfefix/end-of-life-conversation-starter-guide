@@ -18,6 +18,24 @@ export const useSecureDownload = () => {
     setIsDownloading(true);
     
     try {
+      // First, let's check if the bucket exists
+      const { data: buckets, error: bucketError } = await supabase.storage.listBuckets();
+      console.log('Available buckets:', buckets);
+      
+      if (bucketError) {
+        console.error('Error listing buckets:', bucketError);
+      }
+
+      // Try to list files in the private-downloads bucket
+      const { data: files, error: listError } = await supabase.storage
+        .from('private-downloads')
+        .list('');
+      
+      console.log('Files in private-downloads bucket:', files);
+      if (listError) {
+        console.error('Error listing files:', listError);
+      }
+
       // Download the actual PDF from Supabase storage
       const { data, error } = await supabase.storage
         .from('private-downloads')
@@ -25,12 +43,16 @@ export const useSecureDownload = () => {
 
       if (error) {
         console.error('Supabase storage error:', error);
-        throw new Error('Failed to download PDF from storage');
+        
+        // If the file doesn't exist, create a fallback download
+        throw new Error(`Failed to download PDF from storage: ${error.message}`);
       }
 
       if (!data) {
         throw new Error('No PDF data received from storage');
       }
+
+      console.log('PDF data received, size:', data.size);
 
       // Create download link from the blob
       const url = URL.createObjectURL(data);
@@ -76,7 +98,7 @@ export const useSecureDownload = () => {
       
       toast({
         title: "Download Error",
-        description: "There was an issue downloading your PDF. Please try again.",
+        description: `There was an issue downloading your PDF: ${error.message}. Please contact support.`,
         variant: "destructive"
       });
     } finally {
