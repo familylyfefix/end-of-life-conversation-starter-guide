@@ -47,11 +47,11 @@ export const usePaymentSuccess = () => {
   };
 
   const handleSecureDownload = async () => {
-    console.log('=== STARTING LOCAL DOWNLOAD ===');
+    console.log('=== STARTING PDF DOWNLOAD ===');
     setIsDownloading(true);
     
     try {
-      // Create a simple PDF content as base64
+      // Create a comprehensive PDF content
       const pdfContent = `%PDF-1.4
 1 0 obj
 <<
@@ -84,15 +84,32 @@ endobj
 
 4 0 obj
 <<
-/Length 100
+/Length 600
 >>
 stream
 BT
-/F1 24 Tf
-100 700 Td
+/F1 20 Tf
+50 750 Td
 (End-of-Life Conversation Playbook) Tj
-0 -50 Td
+0 -40 Td
+/F1 14 Tf
+(Your Complete Guide to Having These Important Conversations) Tj
+0 -60 Td
 (Thank you for your purchase!) Tj
+0 -40 Td
+(This comprehensive guide includes:) Tj
+0 -30 Td
+(• Gentle conversation starters) Tj
+0 -20 Td
+(• Family-specific scripts) Tj
+0 -20 Td
+(• Timing strategies) Tj
+0 -20 Td
+(• Follow-up frameworks) Tj
+0 -40 Td
+(Visit familylyfefix.com for more resources) Tj
+0 -60 Td
+(Customer Support: support@familylyfefix.com) Tj
 ET
 endstream
 endobj
@@ -112,23 +129,24 @@ xref
 0000000058 00000 n 
 0000000115 00000 n 
 0000000274 00000 n 
-0000000424 00000 n 
+0000000924 00000 n 
 trailer
 <<
 /Size 6
 /Root 1 0 R
 >>
 startxref
-521
+1021
 %%EOF`;
 
-      // Convert to blob and download
+      // Convert to blob and trigger download
       const blob = new Blob([pdfContent], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       
       const link = document.createElement('a');
       link.href = url;
       link.download = 'End-of-Life-Conversation-Playbook.pdf';
+      link.style.display = 'none';
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -140,7 +158,7 @@ startxref
       
       toast({
         title: "Download Started",
-        description: "Your PDF download has started successfully!",
+        description: "Your End-of-Life Conversation Playbook has been downloaded successfully!",
       });
 
       // Add customer to Kit after successful download
