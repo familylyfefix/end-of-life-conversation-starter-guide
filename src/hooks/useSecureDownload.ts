@@ -18,12 +18,28 @@ export const useSecureDownload = () => {
     setIsDownloading(true);
     
     try {
-      // First, let's check if the bucket exists
+      // First, ensure storage bucket exists
+      console.log('Setting up storage bucket...');
+      const { data: setupData, error: setupError } = await supabase.functions.invoke('setup-storage');
+      
+      if (setupError) {
+        console.error('Storage setup error:', setupError);
+      } else {
+        console.log('Storage setup result:', setupData);
+      }
+
+      // Check if the bucket exists
       const { data: buckets, error: bucketError } = await supabase.storage.listBuckets();
       console.log('Available buckets:', buckets);
       
       if (bucketError) {
         console.error('Error listing buckets:', bucketError);
+        throw new Error('Unable to access storage system');
+      }
+
+      const privateBucket = buckets?.find(b => b.name === 'private-downloads');
+      if (!privateBucket) {
+        throw new Error('Storage bucket "private-downloads" does not exist. Please create it in your Supabase dashboard and upload your PDF file.');
       }
 
       // Try to list files in the private-downloads bucket
@@ -34,6 +50,12 @@ export const useSecureDownload = () => {
       console.log('Files in private-downloads bucket:', files);
       if (listError) {
         console.error('Error listing files:', listError);
+        throw new Error('Unable to access files in storage bucket');
+      }
+
+      const pdfFile = files?.find(f => f.name === 'End-of-Life-Conversation-Playbook.pdf');
+      if (!pdfFile) {
+        throw new Error('PDF file "End-of-Life-Conversation-Playbook.pdf" not found in storage. Please upload the file to the private-downloads bucket.');
       }
 
       // Download the actual PDF from Supabase storage
@@ -43,9 +65,7 @@ export const useSecureDownload = () => {
 
       if (error) {
         console.error('Supabase storage error:', error);
-        
-        // If the file doesn't exist, create a fallback download
-        throw new Error(`Failed to download PDF from storage: ${error.message}`);
+        throw new Error(`Failed to download PDF: ${error.message}`);
       }
 
       if (!data) {
@@ -97,8 +117,8 @@ export const useSecureDownload = () => {
       console.error('Download error:', error);
       
       toast({
-        title: "Download Error",
-        description: `There was an issue downloading your PDF: ${error.message}. Please contact support.`,
+        title: "Setup Required",
+        description: error.message || "Please upload your PDF to the Supabase storage bucket first.",
         variant: "destructive"
       });
     } finally {
