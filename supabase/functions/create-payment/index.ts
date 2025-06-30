@@ -60,7 +60,6 @@ serve(async (req) => {
       // Add these settings to ensure proper checkout behavior
       payment_method_types: ['card'],
       billing_address_collection: 'auto',
-      shipping_address_collection: null,
       phone_number_collection: {
         enabled: false,
       },
