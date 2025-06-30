@@ -20,11 +20,11 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Create the private-downloads bucket
-    console.log("Creating private-downloads bucket...");
+    // Create the private-downloads bucket as PUBLIC
+    console.log("Creating public private-downloads bucket...");
     const { data: bucket, error: bucketError } = await supabase.storage
       .createBucket('private-downloads', {
-        public: true, // Make it public for now to test
+        public: true, // Make it public for direct access
         allowedMimeTypes: ['application/pdf'],
         fileSizeLimit: 50 * 1024 * 1024 // 50MB
       });
@@ -32,7 +32,7 @@ serve(async (req) => {
     if (bucketError && !bucketError.message.includes('already exists')) {
       console.error('Error creating bucket:', bucketError);
     } else {
-      console.log('✅ Bucket created or already exists');
+      console.log('✅ Public bucket created or already exists');
     }
 
     // List all files in the bucket
@@ -48,22 +48,7 @@ serve(async (req) => {
     const targetFile = 'end-of-life-conversation-playbook.pdf';
     const pdfExists = files?.some(file => file.name === targetFile);
 
-    let downloadTestResult = null;
-    if (pdfExists) {
-      console.log("PDF file found, testing download...");
-      const { data: downloadData, error: downloadError } = await supabase.storage
-        .from('private-downloads')
-        .download(targetFile);
-      
-      downloadTestResult = {
-        success: !downloadError,
-        error: downloadError?.message,
-        fileSize: downloadData ? downloadData.size : 0
-      };
-      console.log('Download test result:', downloadTestResult);
-    }
-
-    // Get public URL for testing
+    // Get public URL for the PDF
     let publicUrl = null;
     if (pdfExists) {
       const { data: urlData } = supabase.storage
@@ -79,10 +64,10 @@ serve(async (req) => {
       bucket_error: bucketError?.message,
       files_in_bucket: files?.map(f => ({ name: f.name, size: f.metadata?.size })) || [],
       pdf_file_exists: pdfExists,
-      download_test: downloadTestResult,
       public_url: publicUrl,
+      download_url: publicUrl,
       instructions: pdfExists 
-        ? "PDF file found - testing download capability" 
+        ? "✅ PDF file found - public download URL ready" 
         : "❌ PDF file NOT FOUND - please upload 'end-of-life-conversation-playbook.pdf' to the private-downloads bucket"
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

@@ -18,6 +18,7 @@ const PaymentSuccess = () => {
     sessionId,
     isCreatingTestPurchase,
     verificationError,
+    downloadUrl,
     handleCreateTestPurchase,
     handleSecureDownload
   } = usePaymentSuccess();
@@ -78,6 +79,7 @@ const PaymentSuccess = () => {
             isDownloading={isDownloading}
             isVerifying={isVerifyingPayment}
             downloadsRemaining={downloadsRemaining}
+            downloadUrl={downloadUrl}
             onDownload={handleSecureDownload}
           />
 

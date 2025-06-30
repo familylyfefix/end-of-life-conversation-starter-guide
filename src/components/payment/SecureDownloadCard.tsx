@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Download, AlertCircle, Mail } from 'lucide-react';
+import { Download, AlertCircle, Mail, ExternalLink } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -8,6 +8,7 @@ interface SecureDownloadCardProps {
   isDownloading: boolean;
   isVerifying: boolean;
   downloadsRemaining: number | null;
+  downloadUrl?: string | null;
   onDownload: () => void;
 }
 
@@ -15,6 +16,7 @@ const SecureDownloadCard = ({
   isDownloading,
   isVerifying,
   downloadsRemaining,
+  downloadUrl,
   onDownload
 }: SecureDownloadCardProps) => {
   return (
@@ -29,11 +31,11 @@ const SecureDownloadCard = ({
           Your complete End-of-Life Conversation Playbook is ready for secure download.
         </p>
 
-        {downloadsRemaining !== null && (
-          <div className="flex items-center justify-center mb-4 p-3 bg-blue-50 rounded-lg">
-            <AlertCircle className="w-4 h-4 mr-2 text-blue-600" />
-            <span className="text-sm text-blue-700">
-              {downloadsRemaining} downloads remaining (expires in 30 days)
+        {downloadUrl && (
+          <div className="flex items-center justify-center mb-4 p-3 bg-green-50 rounded-lg">
+            <AlertCircle className="w-4 h-4 mr-2 text-green-600" />
+            <span className="text-sm text-green-700">
+              ✅ Download link ready - unlimited access
             </span>
           </div>
         )}
@@ -43,23 +45,40 @@ const SecureDownloadCard = ({
           className="w-full text-white py-3 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
           style={{ backgroundColor: '#8da3e8' }}
           onClick={onDownload}
-          disabled={isDownloading || isVerifying}
+          disabled={isDownloading || isVerifying || !downloadUrl}
         >
           {isDownloading ? (
-            <>Generating Secure Link...</>
+            <>Preparing Download...</>
           ) : isVerifying ? (
             <>Verifying Payment...</>
-          ) : (
+          ) : downloadUrl ? (
             <>
               <Download className="w-5 h-5 mr-2" />
-              Download Your Secure Playbook
+              Download Your Playbook Now
             </>
+          ) : (
+            <>Getting Download Ready...</>
           )}
         </Button>
+
+        {downloadUrl && (
+          <div className="text-center mb-4">
+            <p className="text-sm text-gray-600 mb-2">Or access directly:</p>
+            <a 
+              href={downloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center text-blue-600 hover:text-blue-800 text-sm"
+            >
+              <ExternalLink className="w-4 h-4 mr-1" />
+              Open PDF in New Tab
+            </a>
+          </div>
+        )}
         
         <div className="flex items-center justify-center text-sm text-gray-500">
           <Mail className="w-4 h-4 mr-2" />
-          <span>Secure download link - your purchase is verified</span>
+          <span>Secure download - payment verified</span>
         </div>
       </CardContent>
     </Card>
