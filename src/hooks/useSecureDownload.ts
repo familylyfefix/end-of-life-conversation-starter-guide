@@ -53,15 +53,16 @@ export const useSecureDownload = () => {
         throw new Error('Unable to access files in storage bucket');
       }
 
-      const pdfFile = files?.find(f => f.name === 'End-of-Life-Conversation-Playbook.pdf');
+      // Look for the PDF file with the correct filename (lowercase)
+      const pdfFile = files?.find(f => f.name === 'end-of-life-conversation-playbook.pdf');
       if (!pdfFile) {
-        throw new Error('PDF file "End-of-Life-Conversation-Playbook.pdf" not found in storage. Please upload the file to the private-downloads bucket.');
+        throw new Error('PDF file "end-of-life-conversation-playbook.pdf" not found in storage. Please upload the file to the private-downloads bucket.');
       }
 
-      // Download the actual PDF from Supabase storage
+      // Download the actual PDF from Supabase storage using the correct filename
       const { data, error } = await supabase.storage
         .from('private-downloads')
-        .download('End-of-Life-Conversation-Playbook.pdf');
+        .download('end-of-life-conversation-playbook.pdf');
 
       if (error) {
         console.error('Supabase storage error:', error);
