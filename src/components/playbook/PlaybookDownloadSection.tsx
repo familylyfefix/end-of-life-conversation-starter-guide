@@ -1,17 +1,9 @@
 
 import React from 'react';
-import { Download, CheckCircle } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { CheckCircle } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
-import { usePublicDownload } from '@/hooks/usePublicDownload';
 
 const PlaybookDownloadSection = () => {
-  const { isDownloading, downloadUrl, handleDirectDownload } = usePublicDownload();
-
-  const handleDownloadClick = () => {
-    handleDirectDownload(null);
-  };
-
   return (
     <div className="py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -36,26 +28,9 @@ const PlaybookDownloadSection = () => {
                 Everything you need to have meaningful, stress-free conversations with your family about end-of-lyfe planning.
               </p>
 
-              <Button 
-                size="lg"
-                className="w-full text-white py-4 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
-                style={{ backgroundColor: '#8da3e8' }}
-                onClick={handleDownloadClick}
-                disabled={isDownloading}
-              >
-                {isDownloading ? (
-                  <>Preparing Your Download...</>
-                ) : (
-                  <>
-                    <Download className="w-5 h-5 mr-2" />
-                    Download Your Playbook Now
-                  </>
-                )}
-              </Button>
-
               <div className="flex items-center justify-center text-sm text-gray-500">
                 <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
-                <span>Instant PDF download - no payment required</span>
+                <span>Free starter guide available above</span>
               </div>
             </CardContent>
           </Card>
