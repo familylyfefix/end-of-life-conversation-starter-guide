@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    console.log("=== SETTING UP STORAGE BUCKET FOR PDF DOWNLOADS ===");
+    console.log("=== STORAGE SETUP AND DIAGNOSIS ===");
     
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -24,54 +24,66 @@ serve(async (req) => {
     console.log("Creating private-downloads bucket...");
     const { data: bucket, error: bucketError } = await supabase.storage
       .createBucket('private-downloads', {
-        public: false,
+        public: true, // Make it public for now to test
         allowedMimeTypes: ['application/pdf'],
         fileSizeLimit: 50 * 1024 * 1024 // 50MB
       });
 
     if (bucketError && !bucketError.message.includes('already exists')) {
       console.error('Error creating bucket:', bucketError);
-      throw bucketError;
+    } else {
+      console.log('✅ Bucket created or already exists');
     }
 
-    console.log('✅ Storage bucket ready');
-
-    // Create a simple RLS policy to allow downloads
-    const { error: policyError } = await supabase.rpc('create_policy', {
-      table_name: 'objects',
-      policy_name: 'Allow PDF downloads',
-      definition: `bucket_id = 'private-downloads'::text`,
-      check: `bucket_id = 'private-downloads'::text`,
-      command: 'SELECT'
-    });
-
-    if (policyError) {
-      console.log('Policy creation info:', policyError);
-    }
-
-    // Check if the PDF file exists
-    console.log("Checking for PDF file...");
+    // List all files in the bucket
+    console.log("Listing files in private-downloads bucket...");
     const { data: files, error: listError } = await supabase.storage
       .from('private-downloads')
       .list();
 
-    console.log('Files in bucket:', files);
+    console.log('Files found:', files);
+    console.log('List error:', listError);
 
-    if (listError) {
-      console.error('Error listing files:', listError);
+    // Try to get the specific PDF file info
+    const targetFile = 'end-of-life-conversation-playbook.pdf';
+    const pdfExists = files?.some(file => file.name === targetFile);
+
+    let downloadTestResult = null;
+    if (pdfExists) {
+      console.log("PDF file found, testing download...");
+      const { data: downloadData, error: downloadError } = await supabase.storage
+        .from('private-downloads')
+        .download(targetFile);
+      
+      downloadTestResult = {
+        success: !downloadError,
+        error: downloadError?.message,
+        fileSize: downloadData ? downloadData.size : 0
+      };
+      console.log('Download test result:', downloadTestResult);
     }
 
-    const pdfExists = files?.some(file => file.name === 'end-of-life-conversation-playbook.pdf');
+    // Get public URL for testing
+    let publicUrl = null;
+    if (pdfExists) {
+      const { data: urlData } = supabase.storage
+        .from('private-downloads')
+        .getPublicUrl(targetFile);
+      publicUrl = urlData.publicUrl;
+      console.log('Public URL:', publicUrl);
+    }
 
     return new Response(JSON.stringify({ 
-      success: true, 
-      message: "Storage setup complete",
-      bucket_created: !bucketError,
+      success: true,
+      bucket_status: bucketError ? 'error' : 'ok',
+      bucket_error: bucketError?.message,
+      files_in_bucket: files?.map(f => ({ name: f.name, size: f.metadata?.size })) || [],
       pdf_file_exists: pdfExists,
+      download_test: downloadTestResult,
+      public_url: publicUrl,
       instructions: pdfExists 
-        ? "PDF file found - downloads should work!" 
-        : "Please upload 'end-of-life-conversation-playbook.pdf' to the private-downloads bucket",
-      files_in_bucket: files?.map(f => f.name) || []
+        ? "PDF file found - testing download capability" 
+        : "❌ PDF file NOT FOUND - please upload 'end-of-life-conversation-playbook.pdf' to the private-downloads bucket"
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,

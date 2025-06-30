@@ -14,33 +14,43 @@ export const useSecureDownload = () => {
   const { toast } = useToast();
 
   const handleSecureDownload = async (customerInfo?: CustomerInfo | null) => {
-    console.log('=== STARTING SUPABASE DOWNLOAD ===');
+    console.log('=== STARTING FRESH SUPABASE DOWNLOAD ===');
     console.log('Customer info:', customerInfo);
+    
     setIsDownloading(true);
     
     try {
-      console.log('Attempting to download from Supabase storage...');
+      // First, let's test our storage setup
+      console.log('Testing storage setup...');
+      const { data: setupData, error: setupError } = await supabase.functions.invoke('setup-storage');
+      console.log('Setup response:', setupData, setupError);
+
+      if (!setupData?.pdf_file_exists) {
+        throw new Error('PDF file not found in storage. Please contact support.');
+      }
+
+      console.log('✅ PDF file confirmed in storage, proceeding with download...');
       
-      // Download the PDF directly from Supabase storage
-      const { data, error } = await supabase.storage
+      // Download the PDF from Supabase storage
+      const { data: pdfData, error: downloadError } = await supabase.storage
         .from('private-downloads')
         .download('end-of-life-conversation-playbook.pdf');
 
-      console.log('Supabase download response:', { data, error });
+      console.log('Download response:', { data: !!pdfData, error: downloadError });
 
-      if (error) {
-        console.error('Supabase download error:', error);
-        throw new Error(`Failed to download PDF from Supabase: ${error.message}`);
+      if (downloadError) {
+        console.error('Supabase download error:', downloadError);
+        throw new Error(`Download failed: ${downloadError.message}`);
       }
 
-      if (!data) {
-        throw new Error('No PDF data received from Supabase storage');
+      if (!pdfData) {
+        throw new Error('No PDF data received from storage');
       }
 
-      console.log('✅ PDF downloaded from Supabase successfully, size:', data.size, 'bytes');
+      console.log('✅ PDF downloaded successfully, size:', pdfData.size, 'bytes');
 
-      // Create download link and trigger download
-      const blob = new Blob([data], { type: 'application/pdf' });
+      // Create and trigger download
+      const blob = new Blob([pdfData], { type: 'application/pdf' });
       const url = URL.createObjectURL(blob);
       
       const link = document.createElement('a');
@@ -49,20 +59,20 @@ export const useSecureDownload = () => {
       link.style.display = 'none';
       document.body.appendChild(link);
       
-      console.log('Triggering download...');
+      console.log('Triggering browser download...');
       link.click();
       
       // Cleanup
       document.body.removeChild(link);
       URL.revokeObjectURL(url);
 
-      console.log('✅ DOWNLOAD COMPLETE - FILE DELIVERED TO USER');
+      console.log('✅ DOWNLOAD COMPLETED SUCCESSFULLY');
 
       setDownloadsRemaining(2);
       
       toast({
         title: "Download Complete",
-        description: "Your playbook has been downloaded successfully from secure storage!",
+        description: "Your playbook has been downloaded successfully!",
       });
 
       // Add to Kit if email provided
@@ -86,7 +96,7 @@ export const useSecureDownload = () => {
     } catch (error) {
       console.error('❌ DOWNLOAD FAILED:', error);
       
-      let errorMessage = 'Unable to download PDF from secure storage.';
+      let errorMessage = 'Unable to download PDF.';
       
       if (error instanceof Error) {
         errorMessage = error.message;
@@ -94,7 +104,7 @@ export const useSecureDownload = () => {
       
       toast({
         title: "Download Failed",
-        description: `${errorMessage} Please contact support if this continues.`,
+        description: `${errorMessage} Please contact support.`,
         variant: "destructive"
       });
     } finally {
