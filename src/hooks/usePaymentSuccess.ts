@@ -20,6 +20,7 @@ export const usePaymentSuccess = () => {
     setSessionId(id);
     
     if (id) {
+      // Call verify payment immediately when we have a session ID
       verifyPayment(id);
     } else {
       setIsVerifyingPayment(false);
@@ -28,14 +29,18 @@ export const usePaymentSuccess = () => {
   }, []);
 
   const verifyPayment = async (sessionId: string) => {
+    console.log('=== STARTING PAYMENT VERIFICATION ===');
+    console.log('Session ID:', sessionId);
+    
     try {
-      console.log('Starting payment verification for session:', sessionId);
+      setIsVerifyingPayment(true);
+      console.log('Calling verify-payment function...');
       
       const { data, error } = await supabase.functions.invoke('verify-payment', {
         body: { session_id: sessionId }
       });
 
-      console.log('Verification response:', { data, error });
+      console.log('Verify payment response:', { data, error });
 
       if (error) {
         console.error('Verification error:', error);
@@ -43,7 +48,7 @@ export const usePaymentSuccess = () => {
       }
 
       if (data?.success) {
-        console.log('Payment verified successfully');
+        console.log('✅ Payment verified successfully!');
         setPaymentVerified(true);
         setVerificationError(null);
         toast({
@@ -51,10 +56,11 @@ export const usePaymentSuccess = () => {
           description: "Your purchase has been confirmed and is ready for download.",
         });
       } else {
+        console.error('❌ Verification failed:', data);
         throw new Error(data?.error || 'Unknown verification error');
       }
     } catch (error) {
-      console.error('Payment verification failed:', error);
+      console.error('❌ Payment verification failed:', error);
       const errorMsg = error instanceof Error ? error.message : 'Unknown error occurred';
       setVerificationError(errorMsg);
       toast({
@@ -64,6 +70,7 @@ export const usePaymentSuccess = () => {
       });
     } finally {
       setIsVerifyingPayment(false);
+      console.log('=== PAYMENT VERIFICATION COMPLETE ===');
     }
   };
 
@@ -121,10 +128,11 @@ export const usePaymentSuccess = () => {
       return;
     }
 
+    console.log('=== STARTING DOWNLOAD ===');
+    console.log('Session ID for download:', sessionId);
     setIsDownloading(true);
     
     try {
-      console.log('Starting download for session:', sessionId);
       const { data, error } = await supabase.functions.invoke('generate-download-link', {
         body: { session_id: sessionId }
       });
@@ -175,6 +183,7 @@ export const usePaymentSuccess = () => {
       });
     } finally {
       setIsDownloading(false);
+      console.log('=== DOWNLOAD COMPLETE ===');
     }
   };
 
