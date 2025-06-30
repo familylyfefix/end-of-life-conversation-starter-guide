@@ -14,21 +14,11 @@ export const useSecureDownload = () => {
   const { toast } = useToast();
 
   const handleSecureDownload = async (customerInfo?: CustomerInfo | null) => {
-    console.log('=== STARTING PDF DOWNLOAD FROM SUPABASE ===');
+    console.log('=== STARTING PDF DOWNLOAD FROM SUPABASE ONLY ===');
     setIsDownloading(true);
     
     try {
-      // First, ensure storage bucket exists
-      console.log('Setting up storage bucket...');
-      const { data: setupData, error: setupError } = await supabase.functions.invoke('setup-storage');
-      
-      if (setupError) {
-        console.error('Storage setup error:', setupError);
-      } else {
-        console.log('Storage setup result:', setupData);
-      }
-
-      // Check if the bucket exists
+      // Check if the bucket exists first
       const { data: buckets, error: bucketError } = await supabase.storage.listBuckets();
       console.log('Available buckets:', buckets);
       
@@ -39,10 +29,21 @@ export const useSecureDownload = () => {
 
       const privateBucket = buckets?.find(b => b.name === 'private-downloads');
       if (!privateBucket) {
-        throw new Error('Storage bucket "private-downloads" does not exist. Please create it in your Supabase dashboard and upload your PDF file.');
+        // Try to create the bucket first
+        console.log('Creating private-downloads bucket...');
+        const { error: createError } = await supabase.storage.createBucket('private-downloads', {
+          public: false,
+          allowedMimeTypes: ['application/pdf'],
+          fileSizeLimit: 50 * 1024 * 1024 // 50MB
+        });
+        
+        if (createError && !createError.message.includes('already exists')) {
+          console.error('Error creating bucket:', createError);
+          throw new Error('Cannot create storage bucket. Please contact support.');
+        }
       }
 
-      // Try to list files in the private-downloads bucket
+      // List files in the bucket
       const { data: files, error: listError } = await supabase.storage
         .from('private-downloads')
         .list('');
@@ -53,47 +54,62 @@ export const useSecureDownload = () => {
         throw new Error('Unable to access files in storage bucket');
       }
 
-      // Look for the PDF file with the correct filename (lowercase)
-      const pdfFile = files?.find(f => f.name === 'end-of-life-conversation-playbook.pdf');
+      // Look for the PDF file (try both variations)
+      let pdfFile = files?.find(f => f.name === 'end-of-life-conversation-playbook.pdf');
+      let fileName = 'end-of-life-conversation-playbook.pdf';
+      
       if (!pdfFile) {
-        throw new Error('PDF file "end-of-life-conversation-playbook.pdf" not found in storage. Please upload the file to the private-downloads bucket.');
+        pdfFile = files?.find(f => f.name === 'End-of-Life-Conversation-Playbook.pdf');
+        fileName = 'End-of-Life-Conversation-Playbook.pdf';
+      }
+      
+      if (!pdfFile) {
+        console.error('Available files:', files?.map(f => f.name));
+        throw new Error('PDF file not found in storage. Available files: ' + (files?.map(f => f.name).join(', ') || 'none'));
       }
 
-      // Download the actual PDF from Supabase storage using the correct filename
+      console.log('Found PDF file:', fileName);
+
+      // Download directly from Supabase storage - NO GOOGLE DRIVE
       const { data, error } = await supabase.storage
         .from('private-downloads')
-        .download('end-of-life-conversation-playbook.pdf');
+        .download(fileName);
 
       if (error) {
-        console.error('Supabase storage error:', error);
-        throw new Error(`Failed to download PDF: ${error.message}`);
+        console.error('Supabase storage download error:', error);
+        throw new Error(`Failed to download PDF from Supabase: ${error.message}`);
       }
 
       if (!data) {
-        throw new Error('No PDF data received from storage');
+        throw new Error('No PDF data received from Supabase storage');
       }
 
-      console.log('PDF data received, size:', data.size);
+      console.log('PDF data received from SUPABASE, size:', data.size, 'bytes');
 
-      // Create download link from the blob
-      const url = URL.createObjectURL(data);
+      // Create blob URL and download - COMPLETELY BYPASSING GOOGLE
+      const blob = new Blob([data], { type: 'application/pdf' });
+      const url = URL.createObjectURL(blob);
       
       const link = document.createElement('a');
       link.href = url;
       link.download = 'End-of-Life-Conversation-Playbook.pdf';
       link.style.display = 'none';
       document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
       
-      // Clean up the URL
+      // Force download
+      link.click();
+      
+      // Cleanup
+      document.body.removeChild(link);
       URL.revokeObjectURL(url);
+
+      console.log('✅ PDF DOWNLOADED SUCCESSFULLY FROM SUPABASE - NO GOOGLE INVOLVED');
 
       setDownloadsRemaining(2);
       
       toast({
         title: "Download Started",
-        description: "Your End-of-Life Conversation Playbook has been downloaded successfully!",
+        description: "Your End-of-Life Conversation Playbook has been downloaded successfully from secure storage!",
       });
 
       // Add customer to Kit after successful download
@@ -118,13 +134,13 @@ export const useSecureDownload = () => {
       console.error('Download error:', error);
       
       toast({
-        title: "Setup Required",
-        description: error.message || "Please upload your PDF to the Supabase storage bucket first.",
+        title: "Download Failed",
+        description: error.message || "Unable to download PDF. Please contact support.",
         variant: "destructive"
       });
     } finally {
       setIsDownloading(false);
-      console.log('=== DOWNLOAD COMPLETE ===');
+      console.log('=== DOWNLOAD PROCESS COMPLETE ===');
     }
   };
 
