@@ -7,12 +7,12 @@ import { Testimonial } from '@/types';
 const TestimonialsSection = () => {
   const testimonials: Testimonial[] = [
     {
-      name: "Sarah M.",
+      name: "Brooklyn M.",
       text: "This guide gave me the courage to finally talk to my parents about their wishes. The conversation starters were perfect - not too heavy, but thorough.",
       rating: 5
     },
     {
-      name: "Robert K.",
+      name: "James K.",
       text: "I needed help discussing this with my adult children. The guide made it so much easier than I expected.",
       rating: 5
     },
