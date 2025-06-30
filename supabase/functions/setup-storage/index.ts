@@ -13,7 +13,7 @@ serve(async (req) => {
   }
 
   try {
-    console.log("=== SETTING UP STORAGE BUCKET ===");
+    console.log("=== SETTING UP STORAGE BUCKET FOR PDF DOWNLOADS ===");
     
     const supabase = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -21,6 +21,7 @@ serve(async (req) => {
     );
 
     // Create the private-downloads bucket
+    console.log("Creating private-downloads bucket...");
     const { data: bucket, error: bucketError } = await supabase.storage
       .createBucket('private-downloads', {
         public: false,
@@ -33,23 +34,44 @@ serve(async (req) => {
       throw bucketError;
     }
 
-    console.log('✅ Storage bucket created or already exists');
+    console.log('✅ Storage bucket ready');
 
-    // Create storage policies to allow access to the PDF
-    const { error: policyError } = await supabase.rpc('create_storage_policy', {
-      bucket_name: 'private-downloads',
-      policy_name: 'Allow public access to PDFs',
-      definition: 'true'
+    // Create a simple RLS policy to allow downloads
+    const { error: policyError } = await supabase.rpc('create_policy', {
+      table_name: 'objects',
+      policy_name: 'Allow PDF downloads',
+      definition: `bucket_id = 'private-downloads'::text`,
+      check: `bucket_id = 'private-downloads'::text`,
+      command: 'SELECT'
     });
 
     if (policyError) {
-      console.log('Policy creation failed (may already exist):', policyError);
+      console.log('Policy creation info:', policyError);
     }
+
+    // Check if the PDF file exists
+    console.log("Checking for PDF file...");
+    const { data: files, error: listError } = await supabase.storage
+      .from('private-downloads')
+      .list();
+
+    console.log('Files in bucket:', files);
+
+    if (listError) {
+      console.error('Error listing files:', listError);
+    }
+
+    const pdfExists = files?.some(file => file.name === 'end-of-life-conversation-playbook.pdf');
 
     return new Response(JSON.stringify({ 
       success: true, 
-      message: "Storage bucket created successfully. Now upload your PDF file to the 'private-downloads' bucket with filename 'End-of-Life-Conversation-Playbook.pdf'",
-      bucket: bucket
+      message: "Storage setup complete",
+      bucket_created: !bucketError,
+      pdf_file_exists: pdfExists,
+      instructions: pdfExists 
+        ? "PDF file found - downloads should work!" 
+        : "Please upload 'end-of-life-conversation-playbook.pdf' to the private-downloads bucket",
+      files_in_bucket: files?.map(f => f.name) || []
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
