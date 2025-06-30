@@ -3,6 +3,7 @@ import React from 'react';
 import HeroSection from '@/components/HeroSection';
 import GuidePreviewSection from '@/components/GuidePreviewSection';
 import ProblemSolutionSection from '@/components/ProblemSolutionSection';
+import MidPageCTA from '@/components/MidPageCTA';
 import BenefitsSection from '@/components/BenefitsSection';
 import TestimonialsSection from '@/components/TestimonialsSection';
 import UrgencySection from '@/components/UrgencySection';
@@ -16,6 +17,7 @@ const Index = () => {
       <HeroSection />
       <GuidePreviewSection />
       <ProblemSolutionSection />
+      <MidPageCTA />
       <BenefitsSection />
       <TestimonialsSection />
       <UrgencySection />
