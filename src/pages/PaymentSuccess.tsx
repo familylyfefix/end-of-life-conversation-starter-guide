@@ -1,182 +1,26 @@
 
-import React, { useState, useEffect } from 'react';
-import { CheckCircle, Download, Mail, ArrowLeft, Star, AlertCircle, Bug, Loader2 } from 'lucide-react';
+import React from 'react';
+import { CheckCircle, ArrowLeft, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/integrations/supabase/client';
 import { AlertDialogSimple } from '@/components/ui/alert-dialog-simple';
+import { usePaymentSuccess } from '@/hooks/usePaymentSuccess';
+import PaymentVerification from '@/components/payment/PaymentVerification';
+import OrderSummaryCard from '@/components/payment/OrderSummaryCard';
+import SecureDownloadCard from '@/components/payment/SecureDownloadCard';
+import WhatsNextCard from '@/components/payment/WhatsNextCard';
 
 const PaymentSuccess = () => {
-  const [isDownloading, setIsDownloading] = useState(false);
-  const [isVerifyingPayment, setIsVerifyingPayment] = useState(true);
-  const [paymentVerified, setPaymentVerified] = useState(false);
-  const [downloadsRemaining, setDownloadsRemaining] = useState<number | null>(null);
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [showErrorDialog, setShowErrorDialog] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [isCreatingTestPurchase, setIsCreatingTestPurchase] = useState(false);
-  const [verificationError, setVerificationError] = useState<string | null>(null);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const id = urlParams.get('session_id');
-    console.log('Session ID from URL:', id);
-    setSessionId(id);
-    
-    if (id) {
-      verifyPayment(id);
-    } else {
-      setIsVerifyingPayment(false);
-      setVerificationError('No session ID found in URL');
-    }
-  }, []);
-
-  const verifyPayment = async (sessionId: string) => {
-    try {
-      console.log('Starting payment verification for session:', sessionId);
-      
-      const { data, error } = await supabase.functions.invoke('verify-payment', {
-        body: { session_id: sessionId }
-      });
-
-      console.log('Verification response:', { data, error });
-
-      if (error) {
-        console.error('Verification error:', error);
-        throw new Error(`Verification failed: ${error.message}`);
-      }
-
-      if (data?.success) {
-        console.log('Payment verified successfully');
-        setPaymentVerified(true);
-        setVerificationError(null);
-        toast({
-          title: "Payment Verified",
-          description: "Your purchase has been confirmed and is ready for download.",
-        });
-      } else {
-        throw new Error(data?.error || 'Unknown verification error');
-      }
-    } catch (error) {
-      console.error('Payment verification failed:', error);
-      const errorMsg = error instanceof Error ? error.message : 'Unknown error occurred';
-      setVerificationError(errorMsg);
-      toast({
-        title: "Payment Verification Failed",
-        description: errorMsg,
-        variant: "destructive"
-      });
-    } finally {
-      setIsVerifyingPayment(false);
-    }
-  };
-
-  const handleCreateTestPurchase = async () => {
-    if (!sessionId) {
-      toast({
-        title: "Error",
-        description: "No session ID found",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    setIsCreatingTestPurchase(true);
-    
-    try {
-      console.log('Creating test purchase for session:', sessionId);
-      const { data, error } = await supabase.functions.invoke('create-test-purchase', {
-        body: { session_id: sessionId }
-      });
-
-      console.log('Test purchase response:', { data, error });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (data?.success) {
-        setPaymentVerified(true);
-        setVerificationError(null);
-        toast({
-          title: "Test Purchase Created",
-          description: "A test purchase record has been created. Try downloading now.",
-        });
-      }
-    } catch (error) {
-      console.error('Test purchase creation error:', error);
-      toast({
-        title: "Error",
-        description: "Failed to create test purchase record",
-        variant: "destructive"
-      });
-    } finally {
-      setIsCreatingTestPurchase(false);
-    }
-  };
-
-  const handleSecureDownload = async () => {
-    if (!sessionId) {
-      setErrorMessage("No session ID found. Please contact support with your order details.");
-      setShowErrorDialog(true);
-      return;
-    }
-
-    setIsDownloading(true);
-    
-    try {
-      console.log('Starting download for session:', sessionId);
-      const { data, error } = await supabase.functions.invoke('generate-download-link', {
-        body: { session_id: sessionId }
-      });
-
-      console.log('Download response:', { data, error });
-
-      if (error) {
-        throw new Error(error.message);
-      }
-
-      if (data?.download_url) {
-        const link = document.createElement('a');
-        link.href = data.download_url;
-        link.download = 'End-of-Life-Conversation-Playbook.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-
-        setDownloadsRemaining(data.downloads_remaining);
-        
-        toast({
-          title: "Download Started",
-          description: `Download started successfully. ${data.downloads_remaining} downloads remaining.`,
-        });
-      }
-    } catch (error) {
-      console.error('Download error:', error);
-      
-      let errorMsg = 'Failed to generate download link. Please try again.';
-      
-      if (error instanceof Error) {
-        const message = error.message.toLowerCase();
-        if (message.includes('expired')) {
-          errorMsg = 'Your download link has expired. Please contact support for assistance.';
-        } else if (message.includes('limit exceeded')) {
-          errorMsg = 'You have reached the maximum number of downloads for this purchase.';
-        } else if (message.includes('not found')) {
-          errorMsg = 'Purchase not found. Please contact support with your order details.';
-        } else {
-          errorMsg = error.message;
-        }
-      }
-      
-      setErrorMessage(errorMsg);
-      setShowErrorDialog(true);
-    } finally {
-      setIsDownloading(false);
-    }
-  };
+  const {
+    isDownloading,
+    isVerifyingPayment,
+    paymentVerified,
+    downloadsRemaining,
+    sessionId,
+    isCreatingTestPurchase,
+    verificationError,
+    handleCreateTestPurchase,
+    handleSecureDownload
+  } = usePaymentSuccess();
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #f8f3f0, #ffffff)' }}>
@@ -215,158 +59,29 @@ const PaymentSuccess = () => {
             Payment Successful!
           </h1>
           
-          {/* Payment Verification Status */}
-          {isVerifyingPayment && (
-            <div className="flex items-center justify-center mb-8 p-4 bg-blue-50 rounded-lg">
-              <Loader2 className="w-5 h-5 mr-2 animate-spin text-blue-600" />
-              <span className="text-blue-700">Verifying your payment...</span>
-            </div>
-          )}
-
-          {paymentVerified && (
-            <div className="flex items-center justify-center mb-8 p-4 bg-green-50 rounded-lg">
-              <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
-              <span className="text-green-700">Payment verified successfully!</span>
-            </div>
-          )}
-
-          {verificationError && (
-            <div className="mb-8 p-4 bg-red-50 rounded-lg">
-              <div className="flex items-center justify-center mb-2">
-                <AlertCircle className="w-5 h-5 mr-2 text-red-600" />
-                <span className="text-red-700 font-medium">Verification Failed</span>
-              </div>
-              <p className="text-red-600 text-sm">{verificationError}</p>
-            </div>
-          )}
+          <PaymentVerification
+            isVerifying={isVerifyingPayment}
+            paymentVerified={paymentVerified}
+            verificationError={verificationError}
+            sessionId={sessionId}
+            onCreateTestPurchase={handleCreateTestPurchase}
+            isCreatingTestPurchase={isCreatingTestPurchase}
+          />
 
           <p className="text-xl text-gray-600 mb-8">
             Thank you for your purchase. Your End-of-Life Conversation Playbook is ready for secure download.
           </p>
 
-          {/* Order Summary Card */}
-          <Card className="mb-8 border-2" style={{ borderColor: '#8da3e8' }}>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Order Summary</h3>
-                <span className="text-sm text-gray-500">Session: {sessionId?.substring(0, 8)}...</span>
-              </div>
-              
-              <div className="flex items-start space-x-4 p-4 rounded-lg" style={{ backgroundColor: '#f8f3f0' }}>
-                <img 
-                  src="/lovable-uploads/e859eb8e-6409-4b8d-85f5-b40fbf68e148.png" 
-                  alt="Product"
-                  className="w-16 h-16 rounded-lg object-cover"
-                />
-                <div className="flex-1 text-left">
-                  <h4 className="font-semibold text-gray-900">End-of-Life Conversation Playbook</h4>
-                  <p className="text-sm text-gray-600">Complete digital guide + templates</p>
-                </div>
-                <div className="text-right">
-                  <div className="font-bold text-lg" style={{ color: '#ff8a58' }}>$47.00</div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <OrderSummaryCard sessionId={sessionId} />
 
-          {/* Debug Section - Show when verification fails */}
-          {verificationError && (
-            <Card className="mb-8 border border-orange-200 bg-orange-50">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-center mb-4">
-                  <Bug className="w-6 h-6 mr-2 text-orange-600" />
-                  <h3 className="text-lg font-semibold text-orange-800">Debug Mode</h3>
-                </div>
-                
-                <p className="text-sm text-orange-700 mb-4">
-                  Payment verification failed. Try creating a test purchase record:
-                </p>
-                
-                <Button 
-                  variant="outline"
-                  className="border-orange-300 text-orange-700 hover:bg-orange-100"
-                  onClick={handleCreateTestPurchase}
-                  disabled={isCreatingTestPurchase || !sessionId}
-                >
-                  {isCreatingTestPurchase ? "Creating..." : "Create Test Purchase"}
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+          <SecureDownloadCard
+            isDownloading={isDownloading}
+            isVerifying={isVerifyingPayment}
+            downloadsRemaining={downloadsRemaining}
+            onDownload={handleSecureDownload}
+          />
 
-          {/* Secure Download Section */}
-          <Card className="mb-8">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-center mb-4">
-                <Download className="w-8 h-8 mr-3" style={{ color: '#8da3e8' }} />
-                <h3 className="text-xl font-semibold text-gray-900">Secure Download</h3>
-              </div>
-              
-              <p className="text-gray-600 mb-4">
-                Your complete End-of-Life Conversation Playbook is ready for secure download.
-              </p>
-
-              {downloadsRemaining !== null && (
-                <div className="flex items-center justify-center mb-4 p-3 bg-blue-50 rounded-lg">
-                  <AlertCircle className="w-4 h-4 mr-2 text-blue-600" />
-                  <span className="text-sm text-blue-700">
-                    {downloadsRemaining} downloads remaining (expires in 30 days)
-                  </span>
-                </div>
-              )}
-              
-              <Button 
-                size="lg"
-                className="w-full text-white py-3 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
-                style={{ backgroundColor: '#8da3e8' }}
-                onClick={handleSecureDownload}
-                disabled={isDownloading || isVerifyingPayment}
-              >
-                {isDownloading ? (
-                  <>Generating Secure Link...</>
-                ) : isVerifyingPayment ? (
-                  <>Verifying Payment...</>
-                ) : (
-                  <>
-                    <Download className="w-5 h-5 mr-2" />
-                    Download Your Secure Playbook
-                  </>
-                )}
-              </Button>
-              
-              <div className="flex items-center justify-center text-sm text-gray-500">
-                <Mail className="w-4 h-4 mr-2" />
-                <span>Secure download link - your purchase is verified</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* What's Next */}
-          <Card className="mb-8">
-            <CardContent className="p-6">
-              <h3 className="text-xl font-semibold text-gray-900 mb-4">What's Next?</h3>
-              <div className="space-y-3 text-left">
-                <div className="flex items-start">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-semibold mr-3 mt-1" style={{ backgroundColor: '#8da3e8' }}>
-                    1
-                  </div>
-                  <p className="text-gray-700">Download and review your complete playbook</p>
-                </div>
-                <div className="flex items-start">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-semibold mr-3 mt-1" style={{ backgroundColor: '#8da3e8' }}>
-                    2
-                  </div>
-                  <p className="text-gray-700">Use the preparation checklist to get ready</p>
-                </div>
-                <div className="flex items-start">
-                  <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-semibold mr-3 mt-1" style={{ backgroundColor: '#8da3e8' }}>
-                    3
-                  </div>
-                  <p className="text-gray-700">Schedule your first family conversation</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <WhatsNextCard />
 
           {/* Support */}
           <div className="text-center">
@@ -392,15 +107,6 @@ const PaymentSuccess = () => {
           </div>
         </div>
       </div>
-
-      {/* Error Dialog */}
-      <AlertDialogSimple
-        open={showErrorDialog}
-        onOpenChange={setShowErrorDialog}
-        title="Download Error"
-        description={errorMessage}
-        confirmText="OK"
-      />
     </div>
   );
 };
