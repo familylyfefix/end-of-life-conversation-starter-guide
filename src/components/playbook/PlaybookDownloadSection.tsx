@@ -1,9 +1,14 @@
 
 import React from 'react';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
 const PlaybookDownloadSection = () => {
+  const handleGetPlaybook = () => {
+    window.location.href = '/checkout';
+  };
+
   return (
     <div className="py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -27,6 +32,16 @@ const PlaybookDownloadSection = () => {
               <p className="text-gray-600 mb-6">
                 Everything you need to have meaningful, stress-free conversations with your family about end-of-lyfe planning.
               </p>
+
+              <Button 
+                size="lg"
+                className="w-full text-white py-4 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
+                style={{ backgroundColor: '#8da3e8' }}
+                onClick={handleGetPlaybook}
+              >
+                Get Your Complete Playbook Now
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
 
               <div className="flex items-center justify-center text-sm text-gray-500">
                 <CheckCircle className="w-4 h-4 mr-2 text-green-600" />
