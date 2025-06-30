@@ -8,6 +8,10 @@ import { usePublicDownload } from '@/hooks/usePublicDownload';
 const PlaybookDownloadSection = () => {
   const { isDownloading, downloadUrl, handleDirectDownload } = usePublicDownload();
 
+  const handleDownloadClick = () => {
+    handleDirectDownload(null);
+  };
+
   return (
     <div className="py-16 bg-white">
       <div className="container mx-auto px-4">
@@ -36,7 +40,7 @@ const PlaybookDownloadSection = () => {
                 size="lg"
                 className="w-full text-white py-4 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
                 style={{ backgroundColor: '#8da3e8' }}
-                onClick={handleDirectDownload}
+                onClick={handleDownloadClick}
                 disabled={isDownloading}
               >
                 {isDownloading ? (
