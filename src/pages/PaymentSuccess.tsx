@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { CheckCircle, Download, Mail, ArrowLeft, Star, AlertCircle, Bug } from 'lucide-react';
+import { CheckCircle, Download, Mail, ArrowLeft, Star, AlertCircle, Bug, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
@@ -9,6 +9,8 @@ import { AlertDialogSimple } from '@/components/ui/alert-dialog-simple';
 
 const PaymentSuccess = () => {
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isVerifyingPayment, setIsVerifyingPayment] = useState(true);
+  const [paymentVerified, setPaymentVerified] = useState(false);
   const [downloadsRemaining, setDownloadsRemaining] = useState<number | null>(null);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [showErrorDialog, setShowErrorDialog] = useState(false);
@@ -21,7 +23,46 @@ const PaymentSuccess = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const id = urlParams.get('session_id');
     setSessionId(id);
+    
+    // Automatically verify payment when page loads
+    if (id) {
+      verifyPayment(id);
+    } else {
+      setIsVerifyingPayment(false);
+    }
   }, []);
+
+  const verifyPayment = async (sessionId: string) => {
+    try {
+      console.log('Verifying payment for session:', sessionId);
+      
+      const { data, error } = await supabase.functions.invoke('verify-payment', {
+        body: { session_id: sessionId }
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+
+      if (data.success) {
+        setPaymentVerified(true);
+        toast({
+          title: "Payment Verified",
+          description: "Your purchase has been confirmed and is ready for download.",
+        });
+        console.log('Payment verified successfully');
+      }
+    } catch (error) {
+      console.error('Payment verification failed:', error);
+      toast({
+        title: "Payment Verification Failed",
+        description: "There was an issue verifying your payment. Please try the debug option below.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsVerifyingPayment(false);
+    }
+  };
 
   const handleCreateTestPurchase = async () => {
     if (!sessionId) {
@@ -45,6 +86,7 @@ const PaymentSuccess = () => {
       }
 
       if (data?.success) {
+        setPaymentVerified(true);
         toast({
           title: "Test Purchase Created",
           description: "A test purchase record has been created. Try downloading now.",
@@ -155,6 +197,22 @@ const PaymentSuccess = () => {
           <h1 className="text-4xl font-bold text-gray-900 mb-6">
             Payment Successful!
           </h1>
+          
+          {/* Payment Verification Status */}
+          {isVerifyingPayment && (
+            <div className="flex items-center justify-center mb-8 p-4 bg-blue-50 rounded-lg">
+              <Loader2 className="w-5 h-5 mr-2 animate-spin text-blue-600" />
+              <span className="text-blue-700">Verifying your payment...</span>
+            </div>
+          )}
+
+          {paymentVerified && (
+            <div className="flex items-center justify-center mb-8 p-4 bg-green-50 rounded-lg">
+              <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
+              <span className="text-green-700">Payment verified successfully!</span>
+            </div>
+          )}
+
           <p className="text-xl text-gray-600 mb-8">
             Thank you for your purchase. Your End-of-Life Conversation Playbook is ready for secure download.
           </p>
@@ -184,28 +242,30 @@ const PaymentSuccess = () => {
             </CardContent>
           </Card>
 
-          {/* Debug Section */}
-          <Card className="mb-8 border border-orange-200 bg-orange-50">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-center mb-4">
-                <Bug className="w-6 h-6 mr-2 text-orange-600" />
-                <h3 className="text-lg font-semibold text-orange-800">Debug Mode</h3>
-              </div>
-              
-              <p className="text-sm text-orange-700 mb-4">
-                If download fails, try creating a test purchase record first:
-              </p>
-              
-              <Button 
-                variant="outline"
-                className="border-orange-300 text-orange-700 hover:bg-orange-100"
-                onClick={handleCreateTestPurchase}
-                disabled={isCreatingTestPurchase || !sessionId}
-              >
-                {isCreatingTestPurchase ? "Creating..." : "Create Test Purchase"}
-              </Button>
-            </CardContent>
-          </Card>
+          {/* Debug Section - Only show if payment verification failed */}
+          {!isVerifyingPayment && !paymentVerified && (
+            <Card className="mb-8 border border-orange-200 bg-orange-50">
+              <CardContent className="p-6">
+                <div className="flex items-center justify-center mb-4">
+                  <Bug className="w-6 h-6 mr-2 text-orange-600" />
+                  <h3 className="text-lg font-semibold text-orange-800">Debug Mode</h3>
+                </div>
+                
+                <p className="text-sm text-orange-700 mb-4">
+                  Payment verification failed. Try creating a test purchase record:
+                </p>
+                
+                <Button 
+                  variant="outline"
+                  className="border-orange-300 text-orange-700 hover:bg-orange-100"
+                  onClick={handleCreateTestPurchase}
+                  disabled={isCreatingTestPurchase || !sessionId}
+                >
+                  {isCreatingTestPurchase ? "Creating..." : "Create Test Purchase"}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
 
           {/* Secure Download Section */}
           <Card className="mb-8">
@@ -233,10 +293,12 @@ const PaymentSuccess = () => {
                 className="w-full text-white py-3 text-lg font-semibold mb-4 hover:opacity-90 transition-opacity"
                 style={{ backgroundColor: '#8da3e8' }}
                 onClick={handleSecureDownload}
-                disabled={isDownloading}
+                disabled={isDownloading || isVerifyingPayment}
               >
                 {isDownloading ? (
                   <>Generating Secure Link...</>
+                ) : isVerifyingPayment ? (
+                  <>Verifying Payment...</>
                 ) : (
                   <>
                     <Download className="w-5 h-5 mr-2" />
