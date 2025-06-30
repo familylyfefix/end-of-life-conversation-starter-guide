@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Check, Shield, Lock, Star } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
@@ -48,7 +47,7 @@ const OrderSummary = ({ pricing }: OrderSummaryProps) => {
             className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover flex-shrink-0"
           />
           <div className="flex-1 min-w-0">
-            <h3 className="font-semibold text-gray-900 text-sm sm:text-base">End-of-Life Conversation Playbook</h3>
+            <h3 className="font-semibold text-gray-900 text-sm sm:text-base">End-of-Lyfe Conversation Playbook</h3>
             <p className="text-xs sm:text-sm text-gray-600">Complete digital guide + templates</p>
             <Badge className="mt-1 sm:mt-2 text-xs" style={{ backgroundColor: '#ff8a58', color: 'white' }}>
               Digital Download
