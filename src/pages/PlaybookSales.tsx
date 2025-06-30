@@ -4,7 +4,7 @@ import { usePersonalizedTimer } from '@/hooks/usePersonalizedTimer';
 import PlaybookHeader from '@/components/playbook/PlaybookHeader';
 import PlaybookHero from '@/components/playbook/PlaybookHero';
 import VideoPreview from '@/components/playbook/VideoPreview';
-import PricingCTA from '@/components/playbook/PricingCTA';
+import PlaybookDownloadSection from '@/components/playbook/PlaybookDownloadSection';
 import ProblemSolutionSection from '@/components/playbook/ProblemSolutionSection';
 import PlaybookFeatures from '@/components/playbook/PlaybookFeatures';
 import TestimonialsSection from '@/components/TestimonialsSection';
@@ -37,7 +37,7 @@ const PlaybookSales = () => {
       <PlaybookHeader />
       <PlaybookHero hasExpired={hasExpired} timeLeft={timeLeft} />
       <VideoPreview />
-      <PricingCTA pricing={pricing} hasExpired={hasExpired} onGetAccess={handleGetAccess} />
+      <PlaybookDownloadSection />
       <ProblemSolutionSection />
       <PlaybookFeatures />
       <TestimonialsSection />
