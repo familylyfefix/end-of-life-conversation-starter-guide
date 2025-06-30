@@ -23,7 +23,7 @@ serve(async (req) => {
     // Create the private-downloads bucket
     const { data: bucket, error: bucketError } = await supabase.storage
       .createBucket('private-downloads', {
-        public: false,
+        public: true,
         allowedMimeTypes: ['application/pdf'],
         fileSizeLimit: 50 * 1024 * 1024 // 50MB
       });

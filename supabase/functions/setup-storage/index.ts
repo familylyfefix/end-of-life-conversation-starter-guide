@@ -20,7 +20,22 @@ serve(async (req) => {
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
     );
 
-    // Make sure the private-downloads bucket is PUBLIC
+    // Create the private-downloads bucket if it doesn't exist
+    console.log("Creating/updating private-downloads bucket...");
+    const { data: bucket, error: bucketError } = await supabase.storage
+      .createBucket('private-downloads', {
+        public: true,
+        allowedMimeTypes: ['application/pdf'],
+        fileSizeLimit: 50 * 1024 * 1024 // 50MB
+      });
+
+    if (bucketError && !bucketError.message.includes('already exists')) {
+      console.log('Bucket creation error (may already exist):', bucketError);
+    } else {
+      console.log('✅ Bucket created or already exists');
+    }
+
+    // Make sure the bucket is PUBLIC
     console.log("Updating private-downloads bucket to be public...");
     const { data: updateResult, error: updateError } = await supabase.storage
       .updateBucket('private-downloads', {
@@ -45,9 +60,15 @@ serve(async (req) => {
     console.log('List error:', listError);
 
     if (!files || files.length === 0) {
+      // Try to look for the PDF in other common bucket names
+      console.log("Checking other storage buckets...");
+      const { data: buckets, error: bucketsError } = await supabase.storage.listBuckets();
+      console.log('Available buckets:', buckets);
+      
       return new Response(JSON.stringify({ 
         success: false,
-        error: "No files found in bucket",
+        error: "No files found in private-downloads bucket",
+        available_buckets: buckets?.map(b => b.name) || [],
         instructions: "Please upload the PDF file to the private-downloads bucket"
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -59,6 +80,7 @@ serve(async (req) => {
     const pdfFile = files.find(file => 
       file.name.toLowerCase().includes('playbook') || 
       file.name.toLowerCase().includes('conversation') ||
+      file.name.toLowerCase().includes('end-of-life') ||
       file.name.toLowerCase().endsWith('.pdf')
     );
 
@@ -67,7 +89,7 @@ serve(async (req) => {
         success: false,
         error: "PDF file not found",
         available_files: files.map(f => f.name),
-        instructions: "Please upload a PDF file with 'playbook' or 'conversation' in the name"
+        instructions: "Please upload a PDF file with 'playbook', 'conversation', or 'end-of-life' in the name"
       }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
         status: 400,

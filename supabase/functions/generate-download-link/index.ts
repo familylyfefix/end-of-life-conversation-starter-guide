@@ -18,30 +18,65 @@ serve(async (req) => {
     const { session_id } = await req.json();
     console.log("Session ID:", session_id);
 
-    if (!session_id) {
-      return new Response(JSON.stringify({ error: "Session ID required" }), {
+    const supabase = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+    );
+
+    // Find PDF in storage
+    const { data: files, error: listError } = await supabase.storage
+      .from('private-downloads')
+      .list();
+
+    if (listError || !files || files.length === 0) {
+      console.error("No files found in storage:", listError);
+      return new Response(JSON.stringify({ 
+        error: "PDF file not found in storage. Please contact support."
+      }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
+        status: 404,
       });
     }
 
-    // For now, we'll just return a successful response with a direct download
-    // This bypasses all the complex verification that's been failing
-    console.log("✅ Providing direct download access");
+    // Find the PDF file
+    const pdfFile = files.find(file => 
+      file.name.toLowerCase().includes('playbook') || 
+      file.name.toLowerCase().includes('conversation') ||
+      file.name.toLowerCase().includes('end-of-life') ||
+      file.name.toLowerCase().endsWith('.pdf')
+    );
 
+    if (!pdfFile) {
+      console.error("PDF file not found");
+      return new Response(JSON.stringify({ 
+        error: "PDF file not found. Available files: " + files.map(f => f.name).join(', ')
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        status: 404,
+      });
+    }
+
+    // Get public URL
+    const { data: urlData } = supabase.storage
+      .from('private-downloads')
+      .getPublicUrl(pdfFile.name);
+
+    console.log("✅ Providing direct download access");
+    
     return new Response(JSON.stringify({ 
-      download_url: "https://drive.google.com/uc?export=download&id=1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms",
-      downloads_remaining: 2,
-      message: "Download ready! Your PDF will start downloading immediately."
+      download_url: urlData.publicUrl,
+      file_name: pdfFile.name,
+      expires_in: 3600,
+      success: true
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
       status: 200,
     });
 
   } catch (error) {
-    console.error("❌ Error:", error);
+    console.error("❌ Download generation error:", error);
     return new Response(JSON.stringify({ 
-      error: "Download service temporarily unavailable",
+      error: "Download generation failed",
       details: error.message
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },

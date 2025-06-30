@@ -18,7 +18,13 @@ export const usePublicDownload = () => {
     setIsDownloading(true);
     
     try {
+      // First, try to create/setup the storage bucket
+      console.log('Setting up storage bucket...');
+      const { data: bucketData, error: bucketError } = await supabase.functions.invoke('create-storage-bucket');
+      console.log('Bucket setup response:', bucketData, bucketError);
+
       // Get the public URL from our setup function
+      console.log('Getting PDF from storage...');
       const { data: setupData, error: setupError } = await supabase.functions.invoke('setup-storage');
       console.log('Setup response:', setupData, setupError);
 
@@ -27,6 +33,10 @@ export const usePublicDownload = () => {
       }
 
       if (!setupData?.success) {
+        // If no PDF found, show helpful error message
+        if (setupData?.available_buckets) {
+          throw new Error(`PDF file not found. Available buckets: ${setupData.available_buckets.join(', ')}. Please upload the PDF to the private-downloads bucket.`);
+        }
         throw new Error(setupData?.error || 'Failed to setup download');
       }
 
