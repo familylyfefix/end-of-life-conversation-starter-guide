@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { CheckCircle, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -22,7 +23,7 @@ const GuidePreviewSection = () => {
               <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-8 rounded-2xl shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                   <img 
-                    src="/lovable-uploads/ed366094-5287-4acd-94fa-5653acdcdee9.png" 
+                    src="/lovable-uploads/144c3d9e-308c-432f-9dae-8952a74316a0.png" 
                     alt="End-of-Life Conversation Starter Guide Preview"
                     className="w-full h-auto"
                   />
@@ -31,7 +32,7 @@ const GuidePreviewSection = () => {
               {/* Additional pages mockup */}
               <div className="absolute -bottom-4 -right-4 bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-lg transform -rotate-2 z-10">
                 <img 
-                  src="/lovable-uploads/f0ca72cf-bdb9-43bb-854a-4e99ccfccfd4.png" 
+                  src="/lovable-uploads/c7970b46-60fa-4f83-99f6-78226a907ad2.png" 
                   alt="Guide Interior Page Preview"
                   className="w-48 h-auto rounded-lg shadow-md"
                 />
@@ -111,3 +112,4 @@ const GuidePreviewSection = () => {
 };
 
 export default GuidePreviewSection;
+
