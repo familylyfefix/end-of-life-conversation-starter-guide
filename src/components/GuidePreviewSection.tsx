@@ -24,7 +24,7 @@ const GuidePreviewSection = () => {
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                   <img 
                     src="/lovable-uploads/144c3d9e-308c-432f-9dae-8952a74316a0.png" 
-                    alt="End-of-Life Conversation Starter Guide Preview"
+                    alt="End-of-Lyfe Conversation Starter Guide Preview"
                     className="w-full h-auto"
                   />
                 </div>
@@ -32,7 +32,7 @@ const GuidePreviewSection = () => {
               {/* Additional pages mockup */}
               <div className="absolute -bottom-4 -right-4 bg-gradient-to-br from-gray-50 to-gray-100 p-6 rounded-xl shadow-lg transform -rotate-2 z-10">
                 <img 
-                  src="/lovable-uploads/c7970b46-60fa-4f83-99f6-78226a907ad2.png" 
+                  src="/lovable-uploads/f0ca72cf-bdb9-43bb-854a-4e99ccfccfd4.png" 
                   alt="Guide Interior Page Preview"
                   className="w-48 h-auto rounded-lg shadow-md"
                 />
@@ -46,7 +46,7 @@ const GuidePreviewSection = () => {
                   Everything You Need to Start the Conversation
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  This isn't just another generic guide. It's a carefully crafted resource that addresses the real challenges families face when discussing end-of-life wishes.
+                  This isn't just another generic guide. It's a carefully crafted resource that addresses the real challenges families face when discussing end-of-lyfe wishes.
                 </p>
               </div>
 
@@ -112,4 +112,3 @@ const GuidePreviewSection = () => {
 };
 
 export default GuidePreviewSection;
-
