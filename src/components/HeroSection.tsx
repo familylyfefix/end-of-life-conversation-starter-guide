@@ -135,7 +135,7 @@ const HeroSection = () => {
                   className="w-full py-4 px-6 text-white font-bold rounded-full hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: '#8da3e8' }}
                 >
-                  Subscribe
+                  Get Your Free Guide
                 </button>
               </form>
 
