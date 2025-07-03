@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { CheckCircle, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -23,8 +22,8 @@ const GuidePreviewSection = () => {
               <div className="bg-gradient-to-br from-gray-100 to-gray-200 p-8 rounded-2xl shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                   <img 
-                    src="/lovable-uploads/144c3d9e-308c-432f-9dae-8952a74316a0.png" 
-                    alt="End-of-Lyfe Conversation Starter Guide Preview"
+                    src="/lovable-uploads/ed366094-5287-4acd-94fa-5653acdcdee9.png" 
+                    alt="End-of-Life Conversation Starter Guide Preview"
                     className="w-full h-auto"
                   />
                 </div>
@@ -46,7 +45,7 @@ const GuidePreviewSection = () => {
                   Everything You Need to Start the Conversation
                 </h3>
                 <p className="text-gray-600 mb-6">
-                  This isn't just another generic guide. It's a carefully crafted resource that addresses the real challenges families face when discussing end-of-lyfe wishes.
+                  This isn't just another generic guide. It's a carefully crafted resource that addresses the real challenges families face when discussing end-of-life wishes.
                 </p>
               </div>
 
