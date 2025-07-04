@@ -50,8 +50,8 @@ const HeroSection = () => {
         {/* Family photo under heading */}
         <div className="mb-12">
           <img 
-            src="/lovable-uploads/e859eb8e-6409-4b8d-85f5-b40fbf68e148.png" 
-            alt="Family celebrating together at dinner table"
+            src="/lovable-uploads/5914bf53-7d42-4229-849c-7feecde1912b.png" 
+            alt="Family celebrating together at dinner table - Family Lyfe Fix"
             className="w-full max-w-2xl mx-auto rounded-2xl shadow-lg"
           />
         </div>
