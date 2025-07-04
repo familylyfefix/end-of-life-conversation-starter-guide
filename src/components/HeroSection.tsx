@@ -50,7 +50,7 @@ const HeroSection = () => {
         {/* Family photo under heading */}
         <div className="mb-12">
           <img 
-            src="/lovable-uploads/f0f4c69a-7c55-4b62-ab2e-fe7249e389ac.png" 
+            src="https://lfwcsbchajyzgstsbson.supabase.co/storage/v1/object/public/marketing-images//Mockup%201%20(1).png" 
             alt="The End-of-Lyfe Conversation Starter Guide shown on multiple devices"
             className="w-full max-w-2xl mx-auto rounded-2xl shadow-lg"
           />
