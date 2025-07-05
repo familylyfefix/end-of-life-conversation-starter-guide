@@ -97,7 +97,7 @@ const GuidePreviewSection = () => {
                   size="lg"
                   className="text-white px-8 py-4 text-lg font-semibold hover:opacity-90 transition-opacity"
                   style={{ backgroundColor: '#ff8a58' }}
-                  onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+                  onClick={() => window.location.href = 'https://family-lyfe-fix-2.kit.com/099ebad777'}
                 >
                   <Download className="w-5 h-5 mr-2" />
                   Get Your Free Copy Now

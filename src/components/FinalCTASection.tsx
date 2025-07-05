@@ -23,7 +23,7 @@ const FinalCTASection = () => {
             size="lg"
             className="bg-white hover:bg-gray-100 text-lg px-8 py-4 mb-6"
             style={{ color: '#8da3e8' }}
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            onClick={() => window.location.href = 'https://family-lyfe-fix-2.kit.com/099ebad777'}
           >
             <Download className="w-5 h-5 mr-2" />
             Get Your Free Guide Now
@@ -38,7 +38,7 @@ const FinalCTASection = () => {
               <Button 
                 variant="outline"
                 className="border-white text-white hover:bg-white hover:text-blue-600"
-                onClick={() => window.location.href = '/playbook'}
+                onClick={() => window.location.href = 'https://family-lyfe-fix-2.kit.com/099ebad777'}
               >
                 View Complete Playbook Template
                 <ArrowRight className="w-4 h-4 ml-2" />
