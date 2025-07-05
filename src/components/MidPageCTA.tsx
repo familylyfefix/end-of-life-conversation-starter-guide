@@ -30,7 +30,7 @@ const MidPageCTA = () => {
               size="lg"
               className="text-white py-4 px-8 text-lg font-semibold hover:opacity-90 transition-opacity"
               style={{ backgroundColor: '#8da3e8' }}
-              onClick={() => window.location.href = 'https://family-lyfe-fix-2.kit.com/099ebad777'}
+              onClick={() => window.location.href = '/playbook'}
             >
               View Complete Playbook Template
               <ArrowRight className="w-5 h-5 ml-2" />

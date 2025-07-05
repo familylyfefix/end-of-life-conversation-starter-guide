@@ -38,7 +38,7 @@ const FinalCTASection = () => {
               <Button 
                 variant="outline"
                 className="border-white text-white hover:bg-white hover:text-blue-600"
-                onClick={() => window.location.href = 'https://family-lyfe-fix-2.kit.com/099ebad777'}
+                onClick={() => window.location.href = '/playbook'}
               >
                 View Complete Playbook Template
                 <ArrowRight className="w-4 h-4 ml-2" />
