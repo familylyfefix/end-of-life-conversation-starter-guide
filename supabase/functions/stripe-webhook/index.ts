@@ -12,39 +12,56 @@ const supabase = createClient(
   Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
 );
 
-const triggerZapierWebhook = async (purchaseData: any) => {
-  const zapierWebhookUrl = Deno.env.get("ZAPIER_WEBHOOK_URL");
+const addToKit = async (purchaseData: any) => {
+  const kitApiKey = Deno.env.get("CONVERTKIT_API_KEY");
   
-  if (!zapierWebhookUrl) {
-    console.log("No Zapier webhook URL configured, skipping notification");
+  if (!kitApiKey) {
+    console.log("No ConvertKit API key configured, skipping Kit integration");
     return;
   }
 
   try {
-    const response = await fetch(zapierWebhookUrl, {
+    // Extract first and last name from customer name
+    const customerName = purchaseData.customer_name || "";
+    const nameParts = customerName.split(" ");
+    const firstName = nameParts[0] || "";
+    const lastName = nameParts.slice(1).join(" ") || "";
+
+    console.log("Adding customer to Kit:", {
+      email: purchaseData.customer_email,
+      firstName,
+      lastName,
+      amount: purchaseData.amount
+    });
+
+    const response = await fetch("https://api.convertkit.com/v3/subscribers", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        event_type: "purchase_completed",
-        customer_email: purchaseData.customer_email,
-        customer_name: purchaseData.customer_name,
-        product_name: purchaseData.product_name,
-        amount: purchaseData.amount,
-        currency: purchaseData.currency,
-        purchase_date: new Date().toISOString(),
-        stripe_session_id: purchaseData.stripe_session_id,
+        api_key: kitApiKey,
+        email: purchaseData.customer_email,
+        first_name: firstName,
+        last_name: lastName,
+        tags: [
+          "paid-customer",
+          "playbook-customer",
+          "end-of-life-playbook",
+          `purchase-amount-${Math.floor(purchaseData.amount / 100)}`
+        ]
       }),
     });
 
     if (response.ok) {
-      console.log("Zapier webhook triggered successfully");
+      const kitData = await response.json();
+      console.log("Successfully added customer to Kit:", kitData);
     } else {
-      console.error("Failed to trigger Zapier webhook:", response.status);
+      console.error("Failed to add customer to Kit:", response.status, await response.text());
     }
   } catch (error) {
-    console.error("Error triggering Zapier webhook:", error);
+    console.error("Error adding customer to Kit:", error);
+    // Don't throw error - we don't want Kit integration failures to break the webhook
   }
 };
 
@@ -149,8 +166,8 @@ serve(async (req) => {
       console.log("=== VERIFICATION ===");
       console.log("Verification result:", { verifyPurchase, verifyError });
 
-      // Trigger Zapier webhook
-      await triggerZapierWebhook(purchaseData);
+      // Add customer to Kit
+      await addToKit(purchaseData);
     }
 
     console.log("=== WEBHOOK PROCESSING COMPLETE ===");
