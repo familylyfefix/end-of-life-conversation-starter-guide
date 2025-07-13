@@ -60,7 +60,7 @@ export const usePersonalizedTimer = () => {
       
       // Create new timer for first-time visitor
       const now = new Date();
-      const expiry = new Date(now.getTime() + (3 * 24 * 60 * 60 * 1000)); // 3 days from now
+      const expiry = new Date(now.getTime() + (8 * 24 * 60 * 60 * 1000)); // 8 days from now
       
       const newTimerData: TimerData = {
         visitorId: generateVisitorId(),
@@ -76,7 +76,7 @@ export const usePersonalizedTimer = () => {
       console.error('Error with localStorage:', error);
       // Fallback for browsers without localStorage support
       const now = new Date();
-      const expiry = new Date(now.getTime() + (3 * 24 * 60 * 60 * 1000));
+      const expiry = new Date(now.getTime() + (8 * 24 * 60 * 60 * 1000));
       
       return {
         visitorId: generateVisitorId(),
