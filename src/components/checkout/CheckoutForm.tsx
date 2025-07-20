@@ -1,8 +1,10 @@
+
 import React, { useState } from 'react';
 import { Lock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Form } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Checkbox } from '@/components/ui/checkbox';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { supabase } from '@/integrations/supabase/client';
@@ -12,6 +14,7 @@ import UrgencyBanner from './UrgencyBanner';
 import ContactInformationForm from './ContactInformationForm';
 import BillingAddressForm from './BillingAddressForm';
 import SocialProofSection from './SocialProofSection';
+import TermsModal from './TermsModal';
 
 interface CheckoutFormProps {
   timeLeft: {
@@ -29,6 +32,7 @@ interface CheckoutFormProps {
 
 const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
+  const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
   const { toast } = useToast();
 
   const form = useForm<CheckoutFormData>({
@@ -39,7 +43,8 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
       email: '',
       billingAddress: '',
       city: '',
-      zipCode: ''
+      zipCode: '',
+      termsAccepted: false
     },
     mode: 'onChange'
   });
@@ -118,6 +123,35 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
             <ContactInformationForm form={form} />
             <BillingAddressForm form={form} />
 
+            {/* Terms and Conditions Checkbox */}
+            <FormField
+              control={form.control}
+              name="termsAccepted"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <p className="text-sm text-gray-700">
+                      I agree to the{' '}
+                      <button
+                        type="button"
+                        onClick={() => setIsTermsModalOpen(true)}
+                        className="text-blue-600 hover:text-blue-800 underline font-medium"
+                      >
+                        terms of service and privacy policy
+                      </button>
+                    </p>
+                    <FormMessage />
+                  </div>
+                </FormItem>
+              )}
+            />
+
             <Button
               type="submit"
               size="lg"
@@ -134,17 +168,16 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
                 </>
               )}
             </Button>
-
-            <div className="text-center">
-              <p className="text-xs text-gray-500 leading-relaxed">
-                By completing this order, you agree to our terms of service and privacy policy.
-                Your payment is processed securely and your information is protected.
-              </p>
-            </div>
           </form>
         </Form>
 
         <SocialProofSection />
+
+        {/* Terms Modal */}
+        <TermsModal 
+          open={isTermsModalOpen} 
+          onOpenChange={setIsTermsModalOpen} 
+        />
       </CardContent>
     </Card>
   );

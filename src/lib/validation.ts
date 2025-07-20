@@ -32,7 +32,12 @@ export const checkoutFormSchema = z.object({
   
   zipCode: z.string()
     .min(1, 'ZIP code is required')
-    .regex(/^\d{5}(-\d{4})?$/, 'Please enter a valid ZIP code (12345 or 12345-6789)')
+    .regex(/^\d{5}(-\d{4})?$/, 'Please enter a valid ZIP code (12345 or 12345-6789)'),
+  
+  termsAccepted: z.boolean()
+    .refine((val) => val === true, {
+      message: 'You must accept the terms and conditions to proceed'
+    })
 });
 
 export type CheckoutFormData = z.infer<typeof checkoutFormSchema>;
