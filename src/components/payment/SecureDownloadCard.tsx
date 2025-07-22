@@ -28,7 +28,7 @@ const SecureDownloadCard = ({
         </div>
         
         <p className="text-gray-600 mb-4">
-          Your complete End-of-Life Conversation Playbook is ready for secure download.
+          Your complete End-of-Lyfe Conversation Playbook is ready for secure download.
         </p>
 
         {downloadUrl && (
