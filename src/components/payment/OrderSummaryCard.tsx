@@ -22,7 +22,7 @@ const OrderSummaryCard = ({ sessionId }: OrderSummaryCardProps) => {
             className="w-16 h-16 rounded-lg object-cover"
           />
           <div className="flex-1 text-left">
-            <h4 className="font-semibold text-gray-900">End-of-Life Conversation Playbook</h4>
+            <h4 className="font-semibold text-gray-900">End-of-Lyfe Conversation Playbook</h4>
             <p className="text-sm text-gray-600">Complete digital guide + templates</p>
           </div>
           <div className="text-right">
