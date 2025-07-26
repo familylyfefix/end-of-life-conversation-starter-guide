@@ -20,7 +20,7 @@ const FAQSection = () => {
   ];
 
   return (
-    <div className="py-20">
+    <div className="py-20" style={{ backgroundColor: '#f8f3f0' }}>
       <div className="container mx-auto px-4">
         <div className="max-w-3xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-bold text-gray-900 text-center mb-16">
