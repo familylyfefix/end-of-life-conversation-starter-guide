@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 const GuidePreviewSection = () => {
   return (
-    <div className="py-20 bg-white">
+    <div className="py-20" style={{ backgroundColor: '#f8f3f0' }}>
       <div className="container mx-auto px-4">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
