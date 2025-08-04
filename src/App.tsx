@@ -20,13 +20,15 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/end-of-life-conversation-starter-guide" replace />} />
-          <Route path="/end-of-life-conversation-starter-guide" element={<Index />} />
-          <Route path="/end-of-life-playbook" element={<PlaybookSales />} />
+          <Route path="/" element={<Navigate to="/guide" replace />} />
+          <Route path="/guide" element={<Index />} />
           <Route path="/playbook" element={<PlaybookSales />} />
           <Route path="/funnel" element={<Funnel />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
+          {/* Backward compatibility redirects */}
+          <Route path="/end-of-life-conversation-starter-guide" element={<Navigate to="/guide" replace />} />
+          <Route path="/end-of-life-playbook" element={<Navigate to="/playbook" replace />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
