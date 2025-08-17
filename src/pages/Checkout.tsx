@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { usePersonalizedTimer } from '@/hooks/usePersonalizedTimer';
 import CheckoutHeader from '@/components/checkout/CheckoutHeader';
 import CheckoutProgressIndicator from '@/components/checkout/CheckoutProgressIndicator';
@@ -11,6 +11,10 @@ import OrderSummarySkeleton from '@/components/checkout/OrderSummarySkeleton';
 
 const Checkout = () => {
   const { timeLeft, hasExpired, isLoading, pricing } = usePersonalizedTimer();
+  const [sharedCouponData, setSharedCouponData] = useState<{
+    appliedCoupon?: any;
+    finalPricing?: any;
+  }>({});
 
   return (
     <div className="min-h-screen" style={{ background: 'linear-gradient(to bottom, #f8f3f0, #ffffff)' }}>
@@ -26,7 +30,11 @@ const Checkout = () => {
               {isLoading ? (
                 <OrderSummarySkeleton />
               ) : (
-                <OrderSummary pricing={pricing} />
+                <OrderSummary 
+                  pricing={pricing}
+                  appliedCoupon={sharedCouponData.appliedCoupon}
+                  finalPricing={sharedCouponData.finalPricing}
+                />
               )}
             </div>
 
@@ -39,6 +47,7 @@ const Checkout = () => {
                   timeLeft={timeLeft}
                   hasExpired={hasExpired}
                   pricing={pricing}
+                  onCouponDataChange={setSharedCouponData}
                 />
               )}
             </div>

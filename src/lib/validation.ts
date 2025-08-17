@@ -34,6 +34,15 @@ export const checkoutFormSchema = z.object({
     .min(1, 'ZIP code is required')
     .regex(/^\d{5}(-\d{4})?$/, 'Please enter a valid ZIP code (12345 or 12345-6789)'),
   
+  couponCode: z.string()
+    .optional()
+    .refine((val) => !val || (val.length >= 3 && val.length <= 20), {
+      message: 'Coupon code must be between 3 and 20 characters'
+    })
+    .refine((val) => !val || /^[A-Za-z0-9]+$/.test(val), {
+      message: 'Coupon code can only contain letters and numbers'
+    }),
+  
   termsAccepted: z.boolean()
     .refine((val) => val === true, {
       message: 'You must accept the terms and conditions to proceed'

@@ -15,6 +15,7 @@ import ContactInformationForm from './ContactInformationForm';
 import BillingAddressForm from './BillingAddressForm';
 import SocialProofSection from './SocialProofSection';
 import TermsModal from './TermsModal';
+import CouponCodeSection from './CouponCodeSection';
 
 interface CheckoutFormProps {
   timeLeft: {
@@ -28,11 +29,21 @@ interface CheckoutFormProps {
     regular: number;
     savings: number;
   };
+  onCouponDataChange?: (data: { appliedCoupon?: any; finalPricing?: any; }) => void;
 }
 
-const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
+interface AppliedCoupon {
+  id: string;
+  name?: string;
+  percentOff?: number;
+  amountOff?: number;
+  currency?: string;
+}
+
+const CheckoutForm = ({ timeLeft, hasExpired, pricing, onCouponDataChange }: CheckoutFormProps) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [isTermsModalOpen, setIsTermsModalOpen] = useState(false);
+  const [appliedCoupon, setAppliedCoupon] = useState<AppliedCoupon | null>(null);
   const { toast } = useToast();
 
   const form = useForm<CheckoutFormData>({
@@ -44,10 +55,35 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
       billingAddress: '',
       city: '',
       zipCode: '',
+      couponCode: '',
       termsAccepted: false
     },
     mode: 'onChange'
   });
+
+  // Calculate final pricing with coupon
+  const calculateFinalPricing = () => {
+    let finalAmount = pricing.current;
+    let discountAmount = 0;
+
+    if (appliedCoupon) {
+      if (appliedCoupon.percentOff) {
+        discountAmount = Math.round(pricing.current * (appliedCoupon.percentOff / 100));
+      } else if (appliedCoupon.amountOff) {
+        discountAmount = appliedCoupon.amountOff / 100; // Convert from cents to dollars
+      }
+      finalAmount = Math.max(pricing.current - discountAmount, 0);
+    }
+
+    return {
+      originalAmount: pricing.current,
+      discountAmount,
+      finalAmount,
+      couponApplied: !!appliedCoupon
+    };
+  };
+
+  const finalPricing = calculateFinalPricing();
 
   const onSubmit = async (data: CheckoutFormData) => {
     setIsProcessing(true);
@@ -60,7 +96,8 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
         body: {
           customerEmail: data.email,
           customerName: `${data.firstName} ${data.lastName}`,
-          amount: pricing.current * 100 // Convert to cents for Stripe
+          amount: finalPricing.finalAmount * 100, // Convert to cents for Stripe
+          couponCode: appliedCoupon?.id,
         }
       });
 
@@ -107,6 +144,42 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
     }
   };
 
+  const handleCouponApplied = (coupon: any) => {
+    setAppliedCoupon(coupon);
+    
+    // Calculate pricing with the new coupon
+    let finalAmount = pricing.current;
+    let discountAmount = 0;
+    if (coupon.percentOff) {
+      discountAmount = Math.round(pricing.current * (coupon.percentOff / 100));
+    } else if (coupon.amountOff) {
+      discountAmount = coupon.amountOff / 100;
+    }
+    finalAmount = Math.max(pricing.current - discountAmount, 0);
+    
+    const newFinalPricing = {
+      originalAmount: pricing.current,
+      discountAmount,
+      finalAmount,
+      couponApplied: true
+    };
+    
+    onCouponDataChange?.({ appliedCoupon: coupon, finalPricing: newFinalPricing });
+    toast({
+      title: "Coupon Applied!",
+      description: `${coupon.percentOff ? `${coupon.percentOff}% discount` : `$${(coupon.amountOff / 100).toFixed(2)} discount`} has been applied to your order.`,
+    });
+  };
+
+  const handleCouponRemoved = () => {
+    setAppliedCoupon(null);
+    onCouponDataChange?.({ appliedCoupon: undefined, finalPricing: undefined });
+    toast({
+      title: "Coupon Removed",
+      description: "The coupon has been removed from your order.",
+    });
+  };
+
   return (
     <Card>
       <CardContent className="p-4 sm:p-6 lg:p-8">
@@ -122,6 +195,14 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
             <ContactInformationForm form={form} />
             <BillingAddressForm form={form} />
+
+            {/* Coupon Code Section */}
+            <CouponCodeSection
+              onCouponApplied={handleCouponApplied}
+              onCouponRemoved={handleCouponRemoved}
+              appliedCoupon={appliedCoupon}
+              isProcessing={isProcessing}
+            />
 
             {/* Terms and Conditions Checkbox */}
             <FormField
@@ -164,7 +245,7 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing }: CheckoutFormProps) => {
               ) : (
                 <>
                   <Lock className="w-4 h-4 sm:w-5 sm:h-5 mr-2" />
-                  Complete Secure Order - ${pricing.current}
+                  Complete Secure Order - ${finalPricing.finalAmount}
                 </>
               )}
             </Button>

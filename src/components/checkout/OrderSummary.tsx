@@ -9,9 +9,21 @@ interface OrderSummaryProps {
     regular: number;
     savings: number;
   };
+  appliedCoupon?: {
+    id: string;
+    name?: string;
+    percentOff?: number;
+    amountOff?: number;
+  };
+  finalPricing?: {
+    originalAmount: number;
+    discountAmount: number;
+    finalAmount: number;
+    couponApplied: boolean;
+  };
 }
 
-const OrderSummary = ({ pricing }: OrderSummaryProps) => {
+const OrderSummary = ({ pricing, appliedCoupon, finalPricing }: OrderSummaryProps) => {
   const features = [
     "Complete Preparation System",
     "Conversation Scripts Library", 
@@ -86,10 +98,32 @@ const OrderSummary = ({ pricing }: OrderSummaryProps) => {
               <span className="text-green-600">-${pricing.savings}.00</span>
             </div>
           )}
+          
+          {/* Coupon Discount */}
+          {appliedCoupon && finalPricing && finalPricing.discountAmount > 0 && (
+            <div className="flex justify-between text-sm sm:text-base bg-green-50 p-2 rounded">
+              <span className="text-green-700 font-medium">
+                Coupon: {appliedCoupon.id}
+                {appliedCoupon.percentOff && ` (${appliedCoupon.percentOff}% off)`}
+              </span>
+              <span className="font-semibold text-green-600">
+                -${(finalPricing.discountAmount).toFixed(2)}
+              </span>
+            </div>
+          )}
+          
           <div className="flex justify-between text-lg sm:text-xl font-bold text-gray-900 border-t pt-2">
             <span>Total:</span>
-            <span style={{ color: '#ff8a58' }}>${pricing.current}.00</span>
+            <span style={{ color: '#ff8a58' }}>
+              ${(finalPricing?.finalAmount || pricing.current).toFixed(2)}
+            </span>
           </div>
+          
+          {appliedCoupon && finalPricing && finalPricing.discountAmount > 0 && (
+            <div className="text-sm text-green-600 text-right">
+              Total savings: ${(pricing.savings + finalPricing.discountAmount).toFixed(2)}
+            </div>
+          )}
         </div>
 
         {/* Trust Badges - Mobile Optimized */}

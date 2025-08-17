@@ -20,8 +20,8 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
-    const { customerEmail, customerName, amount } = await req.json();
-    console.log("Payment request:", { customerEmail, customerName, amount });
+    const { customerEmail, customerName, amount, couponCode } = await req.json();
+    console.log("Payment request:", { customerEmail, customerName, amount, couponCode });
 
     if (!customerEmail || !amount) {
       console.error("Missing required fields");
@@ -35,8 +35,8 @@ serve(async (req) => {
     const origin = req.headers.get("origin") || "https://your-domain.lovable.app";
     console.log("Origin:", origin);
 
-    // Create checkout session with proper configuration
-    const session = await stripe.checkout.sessions.create({
+    // Prepare session configuration
+    const sessionConfig: any = {
       customer_email: customerEmail,
       line_items: [
         {
@@ -68,7 +68,38 @@ serve(async (req) => {
           message: 'Complete your secure purchase to get instant access to your playbook.',
         },
       },
-    });
+    };
+
+    // Apply coupon if provided
+    if (couponCode) {
+      console.log("Applying coupon to session:", couponCode);
+      try {
+        // Validate coupon exists
+        const coupon = await stripe.coupons.retrieve(couponCode);
+        if (coupon.valid) {
+          sessionConfig.discounts = [{
+            coupon: couponCode
+          }];
+          sessionConfig.metadata.coupon_code = couponCode;
+          console.log("✅ Coupon applied to session");
+        } else {
+          console.log("❌ Coupon is not valid");
+          return new Response(JSON.stringify({ error: "Invalid coupon code" }), {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 400,
+          });
+        }
+      } catch (couponError: any) {
+        console.error("❌ Coupon validation error:", couponError.code);
+        return new Response(JSON.stringify({ error: "Invalid coupon code" }), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 400,
+        });
+      }
+    }
+
+    // Create checkout session with proper configuration
+    const session = await stripe.checkout.sessions.create(sessionConfig);
 
     console.log("✅ Stripe session created:", session.id);
 
