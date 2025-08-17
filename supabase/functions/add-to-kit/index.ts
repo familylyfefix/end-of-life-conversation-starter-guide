@@ -26,7 +26,7 @@ serve(async (req) => {
         email: email,
         first_name: firstName || "",
         last_name: lastName || "",
-        tags: ["playbook-customer"]
+        tags: ["end-of-lyfe-playbook-purchase"] // Updated to match automation trigger
       }),
     });
 

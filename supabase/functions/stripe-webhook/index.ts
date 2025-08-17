@@ -45,11 +45,15 @@ const addToKit = async (purchaseData: any) => {
         first_name: firstName,
         last_name: lastName,
         tags: [
+          "end-of-lyfe-playbook-purchase", // Primary automation trigger
           "paid-customer",
-          "playbook-customer",
-          "end-of-life-playbook",
           `purchase-amount-${Math.floor(purchaseData.amount / 100)}`
-        ]
+        ],
+        fields: {
+          stripe_session_id: purchaseData.stripe_session_id,
+          purchase_amount: Math.floor(purchaseData.amount / 100),
+          purchase_date: new Date().toISOString().split('T')[0] // YYYY-MM-DD format
+        }
       }),
     });
 
