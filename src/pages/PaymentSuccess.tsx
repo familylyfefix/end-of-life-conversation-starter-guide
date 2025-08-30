@@ -16,6 +16,7 @@ const PaymentSuccess = () => {
     paymentVerified,
     downloadsRemaining,
     sessionId,
+    sessionDetails,
     isCreatingTestPurchase,
     verificationError,
     downloadUrl,
@@ -73,7 +74,11 @@ const PaymentSuccess = () => {
             Thank you for your purchase. Your End-of-Lyfe Conversation Playbook is ready for secure download.
           </p>
 
-          <OrderSummaryCard sessionId={sessionId} />
+          <OrderSummaryCard 
+            sessionId={sessionId} 
+            sessionDetails={sessionDetails}
+            isLoading={isVerifyingPayment}
+          />
 
           <SecureDownloadCard
             isDownloading={isDownloading}

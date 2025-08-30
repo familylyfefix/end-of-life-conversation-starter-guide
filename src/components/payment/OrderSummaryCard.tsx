@@ -1,12 +1,27 @@
 
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
+import { Skeleton } from '@/components/ui/skeleton';
 
 interface OrderSummaryCardProps {
   sessionId: string | null;
+  sessionDetails?: {
+    amount_total: number;
+    currency: string;
+  } | null;
+  isLoading?: boolean;
 }
 
-const OrderSummaryCard = ({ sessionId }: OrderSummaryCardProps) => {
+const OrderSummaryCard = ({ sessionId, sessionDetails, isLoading }: OrderSummaryCardProps) => {
+  // Format the price from cents to dollars
+  const formatPrice = (amountInCents: number) => {
+    const dollars = amountInCents / 100;
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD'
+    }).format(dollars);
+  };
+
   return (
     <Card className="mb-8 border-2" style={{ borderColor: '#8da3e8' }}>
       <CardContent className="p-6">
@@ -26,7 +41,13 @@ const OrderSummaryCard = ({ sessionId }: OrderSummaryCardProps) => {
             <p className="text-sm text-gray-600">Complete digital guide + templates</p>
           </div>
           <div className="text-right">
-            <div className="font-bold text-lg" style={{ color: '#ff8a58' }}>$47.00</div>
+            {isLoading ? (
+              <Skeleton className="h-6 w-20" />
+            ) : (
+              <div className="font-bold text-lg" style={{ color: '#ff8a58' }}>
+                {sessionDetails?.amount_total ? formatPrice(sessionDetails.amount_total) : '$0.00'}
+              </div>
+            )}
           </div>
         </div>
       </CardContent>
