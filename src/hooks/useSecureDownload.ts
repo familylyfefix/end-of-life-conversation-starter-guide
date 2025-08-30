@@ -75,24 +75,6 @@ export const useSecureDownload = () => {
         description: "Your playbook has been downloaded successfully!",
       });
 
-      // Add to Kit if email provided
-      if (customerInfo?.email) {
-        console.log('Adding customer to Kit...');
-        try {
-          const [firstName, lastName] = customerInfo.name.split(' ');
-          await supabase.functions.invoke('add-to-kit', {
-            body: {
-              email: customerInfo.email,
-              firstName: firstName || '',
-              lastName: lastName || ''
-            }
-          });
-          console.log('✅ Customer added to Kit successfully');
-        } catch (kitError) {
-          console.error('Kit integration failed (non-critical):', kitError);
-        }
-      }
-
     } catch (error) {
       console.error('❌ DOWNLOAD FAILED:', error);
       

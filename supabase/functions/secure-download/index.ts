@@ -89,23 +89,6 @@ serve(async (req) => {
     const buffer = await pdfData.arrayBuffer();
     const base64 = btoa(String.fromCharCode(...new Uint8Array(buffer)));
 
-    // Add to Kit if email provided (non-blocking)
-    if (customerEmail) {
-      try {
-        const [firstName, lastName] = (purchase.customer_name || '').split(' ');
-        await supabaseAdmin.functions.invoke('add-to-kit', {
-          body: {
-            email: customerEmail,
-            firstName: firstName || '',
-            lastName: lastName || ''
-          }
-        });
-        console.log('Customer added to Kit successfully');
-      } catch (kitError) {
-        console.error('Kit integration failed (non-critical):', kitError);
-      }
-    }
-
     // Set the appropriate filename for download
     const downloadFileName = isToolkit 
       ? 'End-of-Life-Toolkit.pdf'

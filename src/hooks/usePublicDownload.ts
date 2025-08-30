@@ -99,22 +99,6 @@ export const usePublicDownload = () => {
       title: "Download Started",
       description: "Your playbook download has started!",
     });
-
-    // Add to Kit if email provided
-    if (customerInfo?.email) {
-      console.log('Adding customer to Kit...');
-      supabase.functions.invoke('add-to-kit', {
-        body: {
-          email: customerInfo.email,
-          firstName: customerInfo.name.split(' ')[0] || '',
-          lastName: customerInfo.name.split(' ')[1] || ''
-        }
-      }).then(() => {
-        console.log('✅ Customer added to Kit successfully');
-      }).catch((kitError) => {
-        console.error('Kit integration failed (non-critical):', kitError);
-      });
-    }
   };
 
   return {
