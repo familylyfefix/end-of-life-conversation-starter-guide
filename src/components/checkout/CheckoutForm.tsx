@@ -84,12 +84,17 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing, onCouponDataChange }: Che
   };
 
   const finalPricing = calculateFinalPricing();
+  
+  // Get product type from URL params (default to playbook)
+  const urlParams = new URLSearchParams(window.location.search);
+  const productType = urlParams.get('product') || 'playbook';
 
   const onSubmit = async (data: CheckoutFormData) => {
     setIsProcessing(true);
     
     try {
       console.log('Submitting form with data:', data);
+      console.log('Product type:', productType);
       
       // Call Stripe payment function with better error handling
       const { data: paymentData, error } = await supabase.functions.invoke('create-payment', {
@@ -98,6 +103,7 @@ const CheckoutForm = ({ timeLeft, hasExpired, pricing, onCouponDataChange }: Che
           customerName: `${data.firstName} ${data.lastName}`,
           amount: finalPricing.finalAmount * 100, // Convert to cents for Stripe
           couponCode: appliedCoupon?.id,
+          productType: productType,
         }
       });
 

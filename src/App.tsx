@@ -10,6 +10,7 @@ import PlaybookSales from "./pages/PlaybookSales";
 import Funnel from "./pages/Funnel";
 import Checkout from "./pages/Checkout";
 import PaymentSuccess from "./pages/PaymentSuccess";
+import ToolkitCheckout from "./pages/ToolkitCheckout";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +26,7 @@ const App = () => (
           <Route path="/playbook" element={<PlaybookSales />} />
           <Route path="/funnel" element={<Funnel />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/toolkit-checkout" element={<ToolkitCheckout />} />
           <Route path="/payment-success" element={<PaymentSuccess />} />
           {/* Backward compatibility redirects */}
           <Route path="/end-of-life-conversation-starter-guide" element={<Navigate to="/guide" replace />} />

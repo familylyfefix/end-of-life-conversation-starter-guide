@@ -79,15 +79,19 @@ serve(async (req) => {
       });
     }
 
+    // Determine product details based on metadata
+    const productType = session.metadata?.product_type || "playbook";
+    const isToolkit = productType === "toolkit";
+    
     // Create purchase record with all required fields
     const purchaseData = {
       stripe_session_id: session.id,
       customer_email: session.customer_email || "unknown@example.com",
       customer_name: session.metadata?.customer_name || "Unknown Customer",
-      product_name: "End-of-Life Conversation Playbook",
+      product_name: isToolkit ? "End-of-Life Toolkit" : "End-of-Life Conversation Playbook",
       amount: session.amount_total || 4700,
       currency: session.currency || "usd",
-      max_downloads: 3,
+      max_downloads: 3, // Both products have 3 downloads
       download_count: 0,
       expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString() // 30 days from now
     };

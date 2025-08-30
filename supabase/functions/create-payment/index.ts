@@ -20,8 +20,8 @@ serve(async (req) => {
       apiVersion: "2023-10-16",
     });
 
-    const { customerEmail, customerName, amount, couponCode } = await req.json();
-    console.log("Payment request:", { customerEmail, customerName, amount, couponCode });
+    const { customerEmail, customerName, amount, couponCode, productType = "playbook" } = await req.json();
+    console.log("Payment request:", { customerEmail, customerName, amount, couponCode, productType });
 
     if (!customerEmail || !amount) {
       console.error("Missing required fields");
@@ -30,6 +30,17 @@ serve(async (req) => {
         status: 400,
       });
     }
+
+    // Determine product details based on type
+    const productDetails = productType === "toolkit" 
+      ? {
+          name: "End-of-Life Toolkit",
+          description: "Comprehensive toolkit with resources and guides for end-of-life planning",
+        }
+      : {
+          name: "End-of-Life Conversation Playbook",
+          description: "Complete digital guide with templates and conversation starters",
+        };
 
     // Get the origin for redirect URLs
     const origin = req.headers.get("origin") || "https://your-domain.lovable.app";
@@ -42,10 +53,7 @@ serve(async (req) => {
         {
           price_data: {
             currency: "usd",
-            product_data: {
-              name: "End-of-Life Conversation Playbook",
-              description: "Complete digital guide with templates and conversation starters",
-            },
+            product_data: productDetails,
             unit_amount: amount, // Amount should already be in cents
           },
           quantity: 1,
@@ -56,6 +64,7 @@ serve(async (req) => {
       cancel_url: `${origin}/checkout`,
       metadata: {
         customer_name: customerName || "Unknown Customer",
+        product_type: productType,
       },
       // Add these settings to ensure proper checkout behavior
       payment_method_types: ['card'],

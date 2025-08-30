@@ -67,10 +67,18 @@ serve(async (req) => {
 
     console.log(`Download initiated. Count: ${purchase.download_count + 1}/${purchase.max_downloads}`);
 
+    // Determine which PDF to download based on product name
+    const isToolkit = purchase.product_name === "End-of-Life Toolkit";
+    const pdfFileName = isToolkit 
+      ? 'end-of-life-toolkit.pdf'
+      : 'end-of-life-conversation-playbook.pdf';
+    
+    console.log(`Downloading file: ${pdfFileName} for product: ${purchase.product_name}`);
+
     // Download the PDF from storage
     const { data: pdfData, error: downloadError } = await supabaseAdmin.storage
       .from('private-downloads')
-      .download('end-of-life-conversation-playbook.pdf');
+      .download(pdfFileName);
 
     if (downloadError || !pdfData) {
       console.error('Error downloading PDF:', downloadError);
@@ -98,11 +106,16 @@ serve(async (req) => {
       }
     }
 
+    // Set the appropriate filename for download
+    const downloadFileName = isToolkit 
+      ? 'End-of-Life-Toolkit.pdf'
+      : 'End-of-Life-Conversation-Playbook.pdf';
+
     return new Response(
       JSON.stringify({ 
         success: true,
         pdfData: base64,
-        fileName: 'End-of-Life-Conversation-Playbook.pdf',
+        fileName: downloadFileName,
         downloadsRemaining: purchase.max_downloads - purchase.download_count - 1,
         expiresAt: purchase.expires_at
       }),
