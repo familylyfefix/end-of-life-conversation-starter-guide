@@ -1,1 +1,31 @@
 project_id = "lfwcsbchajyzgstsbson"
+
+[functions."create-test-purchase"]
+verify_jwt = false
+
+[functions."create-payment"]
+verify_jwt = false
+
+[functions."verify-payment"]
+verify_jwt = false
+
+[functions."validate-coupon"]
+verify_jwt = false
+
+[functions."generate-download-link"]
+verify_jwt = false
+
+[functions."setup-storage"]
+verify_jwt = false
+
+[functions."add-to-kit"]
+verify_jwt = false
+
+[functions."create-storage-bucket"]
+verify_jwt = false
+
+[functions."get-payment-session"]
+verify_jwt = false
+
+[functions."secure-download"]
+verify_jwt = false
