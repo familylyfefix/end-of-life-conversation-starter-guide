@@ -32,10 +32,12 @@ export const usePersonalizedTimer = () => {
 
   // Get current price based on timer status
   const getCurrentPrice = (): { current: number; regular: number; savings: number } => {
+    // TESTING MODE: Price set to $0 for testing purposes
+    // TODO: Revert to normal pricing after testing
     if (hasExpired) {
-      return { current: 67, regular: 67, savings: 0 };
+      return { current: 0, regular: 67, savings: 67 };
     }
-    return { current: 47, regular: 67, savings: 20 };
+    return { current: 0, regular: 67, savings: 67 };
   };
 
   // Initialize or get existing timer data
