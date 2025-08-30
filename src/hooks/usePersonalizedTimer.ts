@@ -32,12 +32,10 @@ export const usePersonalizedTimer = () => {
 
   // Get current price based on timer status
   const getCurrentPrice = (): { current: number; regular: number; savings: number } => {
-    // TESTING MODE: Price set to $0 for testing purposes
-    // TODO: Revert to normal pricing after testing
     if (hasExpired) {
-      return { current: 0, regular: 67, savings: 67 };
+      return { current: 57, regular: 57, savings: 0 };
     }
-    return { current: 0, regular: 67, savings: 67 };
+    return { current: 37, regular: 57, savings: 20 };
   };
 
   // Initialize or get existing timer data
@@ -62,7 +60,7 @@ export const usePersonalizedTimer = () => {
       
       // Create new timer for first-time visitor
       const now = new Date();
-      const expiry = new Date(now.getTime() + (8 * 24 * 60 * 60 * 1000)); // 8 days from now
+      const expiry = new Date(now.getTime() + (72 * 60 * 60 * 1000)); // 72 hours from now
       
       const newTimerData: TimerData = {
         visitorId: generateVisitorId(),
@@ -78,7 +76,7 @@ export const usePersonalizedTimer = () => {
       console.error('Error with localStorage:', error);
       // Fallback for browsers without localStorage support
       const now = new Date();
-      const expiry = new Date(now.getTime() + (8 * 24 * 60 * 60 * 1000));
+      const expiry = new Date(now.getTime() + (72 * 60 * 60 * 1000));
       
       return {
         visitorId: generateVisitorId(),
