@@ -23,7 +23,7 @@ serve(async (req) => {
     const { customerEmail, customerName, amount, couponCode, productType = "playbook" } = await req.json();
     console.log("Payment request:", { customerEmail, customerName, amount, couponCode, productType });
 
-    if (!customerEmail || !amount) {
+    if (!customerEmail || amount === undefined || amount === null) {
       console.error("Missing required fields");
       return new Response(JSON.stringify({ error: "Missing required fields" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
